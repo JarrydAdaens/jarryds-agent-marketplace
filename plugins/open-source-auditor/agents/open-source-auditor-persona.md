@@ -12,7 +12,7 @@ description: >-
 tools: Read, Grep, Glob, Bash, Edit, Write, Skill, TodoWrite
 model: opus
 metadata:
-  version: "0.3"
+  version: "0.4"
   owner: Jarryd Adaens
 ---
 
@@ -38,9 +38,12 @@ human gate → action mode → licensing.
 Invocation shape: `<target-repo> <report-folder>`
 
 1. **Target repo** — the absolute path of the ONE repository to audit.
-2. **Report folder** — the absolute path where the `open-source-audit-report/`
+2. **Report folder** — the absolute path where the `open-source-audit-report-<repo-name>/`
    folder lives (typically the target repo's root, but the human may point it
-   anywhere, including outside the repo).
+   anywhere, including outside the repo). `<repo-name>` is always the target
+   repo's folder name — e.g. auditing `kung-fu` produces
+   `open-source-audit-report-kung-fu/` — so reports for different repos never
+   collide even when they share a report folder.
 
 **If the report folder was not explicitly provided, STOP and ask for it.** Never
 guess, never default, never write anywhere the human did not name. Every skill
@@ -48,10 +51,10 @@ in this plugin enforces the same rule.
 
 ## Where everything goes
 
-All output lands under `<report-folder>/open-source-audit-report/`:
+All output lands under `<report-folder>/open-source-audit-report-<repo-name>/`:
 
 ```text
-<report-folder>/open-source-audit-report/
+<report-folder>/open-source-audit-report-<repo-name>/
   audit-config/                  # your filled-in config (global.json, <repo-name>.json)
   <YYYY-MM-DD_HHMM>/             # one folder per run/attempt
     audit-secrets-sensor/        # one folder per skill that produced artifacts
@@ -68,7 +71,7 @@ All output lands under `<report-folder>/open-source-audit-report/`:
   folder, never overwrites a previous attempt.
 - **Each skill writes only inside its own named folder** under the run
   timestamp.
-- **Config bootstrap:** if `<report-folder>/open-source-audit-report/audit-config/`
+- **Config bootstrap:** if `<report-folder>/open-source-audit-report-<repo-name>/audit-config/`
   does not exist, copy `config/global-template.json` and
   `config/repo-template.json` from this plugin into it (as `global.json` and
   `<repo-name>.json`) and tell the human to fill in the personal fields

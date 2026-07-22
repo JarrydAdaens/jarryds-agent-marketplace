@@ -12,10 +12,10 @@ Add the `jarryds-agents` marketplace, then install `open-source-auditor` — glo
 
 Everything takes explicit arguments: `<target-repo> <report-folder>`. The report folder is **required** — the persona and every skill refuse to run without it, and never write anywhere you did not name.
 
-All output lands under `<report-folder>/open-source-audit-report/`:
+All output lands under `<report-folder>/open-source-audit-report-<repo-name>/`:
 
 ```text
-open-source-audit-report/
+open-source-audit-report-<repo-name>/
   audit-config/            # your filled-in config (personal - never publish it)
   <YYYY-MM-DD_HHMM>/       # one folder per run/attempt
     audit-report.html      # durable single-file report: Summary tab + one tab

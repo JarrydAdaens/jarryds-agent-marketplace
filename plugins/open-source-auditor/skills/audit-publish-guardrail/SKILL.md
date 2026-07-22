@@ -14,7 +14,7 @@ description: >-
   the publish verdict".
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
-  version: "0.2"
+  version: "0.3"
   owner: Jarryd Adaens
   stage: guardrail
 ---
@@ -28,22 +28,22 @@ consumes `raw/` + `normalized/` from the sensors and does three things.
 
 Invocation: `<target-repo> <report-folder> [run-timestamp]`
 
-- `report-folder` — absolute path where `open-source-audit-report/` lives.
+- `report-folder` — absolute path where `open-source-audit-report-<repo-name>/` lives.
   **Required: if it was not explicitly provided, STOP and ask — never guess or
   default.**
 - `run-timestamp` — which run to triage; defaults to the newest
-  `<YYYY-MM-DD_HHMM>` folder under `<report-folder>/open-source-audit-report/`.
+  `<YYYY-MM-DD_HHMM>` folder under `<report-folder>/open-source-audit-report-<repo-name>/`.
 
-Derived: `RUN = <report-folder>/open-source-audit-report/<run-timestamp>`. Reads
+Derived: `RUN = <report-folder>/open-source-audit-report-<repo-name>/<run-timestamp>`. Reads
 every sensor's `RUN/<sensor-name>/raw|normalized`; writes only
 `RUN/audit-publish-guardrail/audit-report.md`. Config comes from
-`<report-folder>/open-source-audit-report/audit-config/` (`global.json` +
+`<report-folder>/open-source-audit-report-<repo-name>/audit-config/` (`global.json` +
 `<repo-name>.json`).
 
 ## Standing Critical check — the report tree itself
 
 Before triaging findings, check whether any of
-`<report-folder>/open-source-audit-report/` is **tracked by the target repo's
+`<report-folder>/open-source-audit-report-<repo-name>/` is **tracked by the target repo's
 git** (`git -C "$REPO" ls-files "<path>"`). The report tree contains the very
 findings the audit exists to catch (secret locations, names, venting quotes)
 and the personal `audit-config/` watchlists; if any of it is tracked, raise a

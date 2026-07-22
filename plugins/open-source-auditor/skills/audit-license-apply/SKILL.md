@@ -11,7 +11,7 @@ description: >-
   this repo", "license the repo for publish".
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
-  version: "0.1"
+  version: "0.2"
   owner: Jarryd Adaens
   stage: action-mode
 ---
@@ -26,13 +26,13 @@ has said "license this one."
 
 Invocation: `<target-repo> <report-folder> [run-timestamp]`
 
-- `report-folder` — absolute path where `open-source-audit-report/` lives.
+- `report-folder` — absolute path where `open-source-audit-report-<repo-name>/` lives.
   **Required: if it was not explicitly provided, STOP and ask — never guess or
   default.**
 - The PASS verdict is read from
-  `<report-folder>/open-source-audit-report/<run-timestamp>/audit-publish-guardrail/audit-report.md`
+  `<report-folder>/open-source-audit-report-<repo-name>/<run-timestamp>/audit-publish-guardrail/audit-report.md`
   (newest run if no timestamp given); config from
-  `<report-folder>/open-source-audit-report/audit-config/`.
+  `<report-folder>/open-source-audit-report-<repo-name>/audit-config/`.
 
 ## Settled policy (encode verbatim — do not relitigate)
 

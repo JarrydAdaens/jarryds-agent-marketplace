@@ -11,7 +11,7 @@ description: >-
   before re-running the audit".
 argument-hint: <report-folder>
 metadata:
-  version: "0.1"
+  version: "0.2"
   owner: Jarryd Adaens
   stage: maintenance
 ---
@@ -31,7 +31,7 @@ one's state is unknown.
 - **Report first, act second.** Every kill and every folder prune is listed to
   the human before execution; nothing is terminated or deleted silently.
 - Never touches a target repo — only processes and the
-  `<report-folder>/open-source-audit-report/` tree.
+  `<report-folder>/open-source-audit-report-<repo-name>/` tree.
 - `report-folder` is the same path the audit was run with. **If it was not
   explicitly provided, do Step 1 (processes) and Step 3 (headroom) only, and ask
   for it before Step 2** — never guess where run folders live.
@@ -64,7 +64,7 @@ matching output** (e.g. `scancode.stderr.txt` with no `scancode.json`), or a
 `raw/` folder that is empty despite the run folder existing.
 
 ```powershell
-$auditRoot = "<report-folder>\open-source-audit-report"
+$auditRoot = "<report-folder>\open-source-audit-report-<repo-name>"
 Get-ChildItem $auditRoot -Directory |
   Where-Object { $_.Name -ne 'audit-config' } | ForEach-Object {
   Get-ChildItem $_.FullName -Directory -ErrorAction SilentlyContinue

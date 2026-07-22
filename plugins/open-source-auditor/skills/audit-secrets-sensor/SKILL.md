@@ -10,7 +10,7 @@ description: >-
   credentials", pre-publish secret sweep.
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
-  version: "0.1"
+  version: "0.2"
   owner: Jarryd Adaens
   stage: audit-mode-sensor
 ---
@@ -27,15 +27,15 @@ secrets hide and where a reviewer's own scanner will find them.
 Invocation: `<target-repo> <report-folder> [run-timestamp]`
 
 - `REPO` — absolute path of the ONE repo being audited.
-- `report-folder` — absolute path where `open-source-audit-report/` lives.
+- `report-folder` — absolute path where `open-source-audit-report-<repo-name>/` lives.
   **Required: if it was not explicitly provided, STOP and ask — never guess or
   default.**
 - `run-timestamp` — the shared `YYYY-MM-DD_HHMM` stamp when part of a
   persona-led run; mint a fresh one standalone. Never overwrite an earlier run.
 
-Derived: `RUN = <report-folder>/open-source-audit-report/<run-timestamp>`,
+Derived: `RUN = <report-folder>/open-source-audit-report-<repo-name>/<run-timestamp>`,
 `OUT = RUN/audit-secrets-sensor`, `RAW = OUT/raw`. Config lives in
-`<report-folder>/open-source-audit-report/audit-config/` (bootstrap from this
+`<report-folder>/open-source-audit-report-<repo-name>/audit-config/` (bootstrap from this
 plugin's `config/` templates if missing). `LIB` = the `audit-lib/` folder at
 this plugin's root (`../../audit-lib` relative to this SKILL.md).
 
