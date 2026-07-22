@@ -11,7 +11,7 @@ description: >-
   code I don't own", "scan copyright holders before publish".
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
-  version: "0.1"
+  version: "0.2"
   owner: Jarryd Adaens
   stage: audit-mode-sensor
 ---
@@ -55,12 +55,19 @@ SKILL.md).
 ```bash
 scancode -clipeu --json-pp "$RAW/scancode.json" --processes 4 --timeout 120 \
   --max-in-memory 10000 \
-  --ignore ".git/*" --ignore "node_modules/*" --ignore "dist/*" \
-  --ignore "build/*" --ignore "*.min.js" --ignore ".venv/*" --ignore "venv/*" \
-  --ignore "Library/*" --ignore "Intermediate/*" --ignore "Saved/*" \
-  --ignore "DerivedDataCache/*" --ignore "Binaries/*" \
+  --ignore .git --ignore node_modules --ignore dist --ignore build \
+  --ignore .venv --ignore venv --ignore Library --ignore Intermediate \
+  --ignore Saved --ignore DerivedDataCache --ignore Binaries \
+  --ignore "*.min.js" \
   "$REPO" 2> "$RAW/scancode.stderr.txt"
 ```
+
+**Windows ignore-glob hazard (verified 2026-07-22):** glob-form ignore values
+like `.git/*` can be expanded by ScanCode/Click on Windows into the positional
+*input list*, silently hijacking the scan — it completes "successfully" with
+`files_count: 0` and directory stubs only. Use **bare directory-name ignores**
+(they cannot glob-expand; ScanCode still excludes the directory contents) and
+invoke ScanCode without a shell (e.g. a python subprocess with `shell=False`).
 
 ScanCode is heavy and slow (deep per-file scan) — that is expected; it is the
 thorough pass, run once per audit, not per commit.
@@ -82,6 +89,9 @@ crawl, unrelated apps crashing on failed allocations). Therefore:
 - **Verify completion:** `scancode.json` must exist afterward. A
   `scancode.stderr.txt` without a `scancode.json` means ScanCode died or was
   orphaned — record the sensor as failed and run `audit-cleanup` before retrying.
+- **Verify coverage:** check `files_count` inside `scancode.json`. A near-zero
+  count on a non-empty repo means the Windows ignore-glob hazard above hijacked
+  the input list — the scan is invalid; fix the ignores and re-run.
 
 ## What to surface (deterministic, for the guardrail to triage)
 
