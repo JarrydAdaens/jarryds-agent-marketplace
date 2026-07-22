@@ -5,9 +5,11 @@ description: >-
   open-source pre-publication audit. Use when auditing a target repo for known
   CVEs in dependencies and — critically for an Apache 2.0 release — copyleft or
   unknown-license dependencies that create viral-scrap risk. Generates an SBOM,
-  scans it, and cross-checks with a multi-tool pass. Read-only. Triggers: "audit
-  dependencies", "SBOM the repo", "check for copyleft licenses", "scan for CVEs
-  before publish".
+  scans it, and cross-checks with a multi-tool pass. Read-only on the target
+  repo: writes only into the user-specified report folder, and refuses to run
+  without one. Triggers: "audit dependencies", "SBOM the repo", "check for
+  copyleft licenses", "scan for CVEs before publish".
+argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.1"
   owner: Jarryd Adaens
@@ -20,9 +22,26 @@ Dependency, vulnerability, and **license-compatibility** risk — the last one i
 critical now that everything ships Apache 2.0. A GPL/AGPL dependency in an
 Apache repo is a Critical finding.
 
+## Required arguments & paths
+
+Invocation: `<target-repo> <report-folder> [run-timestamp]`
+
+- `REPO` — absolute path of the ONE repo being audited.
+- `report-folder` — absolute path where `open-source-audit-report/` lives.
+  **Required: if it was not explicitly provided, STOP and ask — never guess or
+  default.**
+- `run-timestamp` — the shared `YYYY-MM-DD_HHMM` stamp when part of a
+  persona-led run; mint a fresh one standalone. Never overwrite an earlier run.
+
+Derived: `RUN = <report-folder>/open-source-audit-report/<run-timestamp>`,
+`OUT = RUN/audit-dependency-sensor`, `RAW = OUT/raw`. Config lives in
+`<report-folder>/open-source-audit-report/audit-config/`. `LIB` = the
+`audit-lib/` folder at this plugin's root (`../../audit-lib` relative to this
+SKILL.md).
+
 ## Contract
 
-- **Read-only on the target repo.** All output to the run's `raw/` folder.
+- **Read-only on the target repo.** All output goes only inside `OUT`.
 
 ## Tools & invocations
 
@@ -56,5 +75,6 @@ write `raw/license-check.json`:
 ## Output
 
 `raw/syft-sbom.json`, `raw/grype.json`, `raw/trivy.json`,
-`raw/license-check.json`, then normalize. The SBOM also feeds
-`audit-license-apply` for required NOTICE attributions.
+`raw/license-check.json`, then normalize
+(`uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"`). The SBOM also
+feeds `audit-license-apply` for required NOTICE attributions.

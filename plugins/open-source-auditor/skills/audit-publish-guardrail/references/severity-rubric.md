@@ -1,6 +1,6 @@
 # Severity Rubric
 
-The category → tier map is **data**, in `context/audit-config/global.json` →
+The category → tier map is **data**, in the run's `audit-config/global.json` →
 `severityPolicy`. This file explains what each tier *means* and how the guardrail
 is allowed to move a finding within it. It never overrides the JSON; if the two
 disagree, the JSON wins and the rubric is stale.

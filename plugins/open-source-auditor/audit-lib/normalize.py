@@ -13,7 +13,7 @@ Rules (from the design spec):
   - Sort findings by (file, line, rule) so ordering is never a diff artifact.
 
 Usage:
-    uv run .claude/audit-lib/normalize.py <repo_root> <raw_dir> <normalized_dir>
+    uv run <plugin-root>/audit-lib/normalize.py <repo_root> <raw_dir> <normalized_dir>
 """
 from __future__ import annotations
 

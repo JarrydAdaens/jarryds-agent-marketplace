@@ -3,10 +3,13 @@ name: audit-hygiene-sensor
 description: >-
   First-impression hygiene scanner for the open-source pre-publication audit. Use
   when auditing a target repo for dead links, typos, README-vs-reality mismatches,
-  unexplained branches, and repo-completeness (LICENSE / README / NOTICE). Read-only.
-  Knows that documented experiment branches are ASSETS to point at, not clutter to
-  delete. Triggers: "audit hygiene", "check for dead links", "does the README match
-  the repo", "audit the branches before publish".
+  unexplained branches, and repo-completeness (LICENSE / README / NOTICE).
+  Read-only on the target repo: writes only into the user-specified report
+  folder, and refuses to run without one. Knows that documented experiment
+  branches are ASSETS to point at, not clutter to delete. Triggers: "audit
+  hygiene", "check for dead links", "does the README match the repo", "audit
+  the branches before publish".
+argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.1"
   owner: Jarryd Adaens
@@ -17,13 +20,30 @@ metadata:
 
 Everything a reviewer notices in the first five minutes.
 
+## Required arguments & paths
+
+Invocation: `<target-repo> <report-folder> [run-timestamp]`
+
+- `REPO` — absolute path of the ONE repo being audited.
+- `report-folder` — absolute path where `open-source-audit-report/` lives.
+  **Required: if it was not explicitly provided, STOP and ask — never guess or
+  default.**
+- `run-timestamp` — the shared `YYYY-MM-DD_HHMM` stamp when part of a
+  persona-led run; mint a fresh one standalone. Never overwrite an earlier run.
+
+Derived: `RUN = <report-folder>/open-source-audit-report/<run-timestamp>`,
+`OUT = RUN/audit-hygiene-sensor`, `RAW = OUT/raw`. Config lives in
+`<report-folder>/open-source-audit-report/audit-config/`. `LIB` = the
+`audit-lib/` folder at this plugin's root (`../../audit-lib` relative to this
+SKILL.md).
+
 ## Contract
 
-- **Read-only on the target repo.** All output to the run's `raw/` folder.
+- **Read-only on the target repo.** All output goes only inside `OUT`.
 
 ## Checks
 
-1. **Dead links** — `lychee` over all markdown (Rails repos are markdown-heavy).
+1. **Dead links** — `lychee` over all markdown.
    Default posture is `--offline` (local-path links only). Drop `--offline` only
    when web-link checking is explicitly wanted, and then cap concurrency —
    every web link is a live HTTP request to someone's server:
@@ -32,10 +52,10 @@ Everything a reviewer notices in the first five minutes.
    # web mode (explicit request only): lychee --max-concurrency 8 --format json ...
    ```
 2. **Typos** — `codespell` (via uvx), honoring the per-repo ignore list plus
-   `hygiene.codespellIgnoreWords` in `global.json` (Rails coinages like "grugg"
-   false-positive):
+   `hygiene.codespellIgnoreWords` in `audit-config/global.json` (project
+   coinages false-positive):
    ```bash
-   uvx codespell --ignore-words-list grugg,grugge,rube,rog "$REPO" > "$RAW/codespell.txt"
+   uvx codespell --ignore-words-list "<comma-joined codespellIgnoreWords>" "$REPO" > "$RAW/codespell.txt"
    ```
    Convert to `raw/codespell.json`.
 3. **README-vs-reality** — deterministic first: every path/file the README
@@ -59,4 +79,5 @@ Everything a reviewer notices in the first five minutes.
 ## Output
 
 `raw/lychee.json`, `raw/codespell.json`, `raw/readme-check.json`,
-`raw/branch-inventory.json`, then normalize.
+`raw/branch-inventory.json`, then normalize
+(`uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"`).

@@ -4,9 +4,11 @@ description: >-
   Deterministic secret scanner for the open-source pre-publication audit. Use
   when auditing a target repo for leaked API keys, tokens, credentials, private
   keys, internal URLs, or company identity — in current files AND full git
-  history. Read-only: writes only into the meta-workspace reports tree, never the
-  target repo. Highest-stakes sensor; run it first. Triggers: "audit secrets",
-  "scan for leaked keys", "check history for credentials", pre-publish secret sweep.
+  history. Read-only on the target repo: writes only into the user-specified
+  report folder, and refuses to run without one. Highest-stakes sensor; run it
+  first. Triggers: "audit secrets", "scan for leaked keys", "check history for
+  credentials", pre-publish secret sweep.
+argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.1"
   owner: Jarryd Adaens
@@ -20,11 +22,27 @@ BLOCKs publish unconditionally. It scans the working tree **and the entire git
 history of every branch that will be pushed**, because history is exactly where
 secrets hide and where a reviewer's own scanner will find them.
 
+## Required arguments & paths
+
+Invocation: `<target-repo> <report-folder> [run-timestamp]`
+
+- `REPO` — absolute path of the ONE repo being audited.
+- `report-folder` — absolute path where `open-source-audit-report/` lives.
+  **Required: if it was not explicitly provided, STOP and ask — never guess or
+  default.**
+- `run-timestamp` — the shared `YYYY-MM-DD_HHMM` stamp when part of a
+  persona-led run; mint a fresh one standalone. Never overwrite an earlier run.
+
+Derived: `RUN = <report-folder>/open-source-audit-report/<run-timestamp>`,
+`OUT = RUN/audit-secrets-sensor`, `RAW = OUT/raw`. Config lives in
+`<report-folder>/open-source-audit-report/audit-config/` (bootstrap from this
+plugin's `config/` templates if missing). `LIB` = the `audit-lib/` folder at
+this plugin's root (`../../audit-lib` relative to this SKILL.md).
+
 ## Contract
 
-- **Read-only on the target repo.** Every artifact goes to the run folder under
-  `context/reports/audit/<repo-name>/<YYYY-MM-DD_HHMM>/raw/`. Nothing in the
-  target repo is created, modified, or deleted.
+- **Read-only on the target repo.** Every artifact goes inside `OUT`; nothing in
+  the target repo is created, modified, or deleted.
 - **Deterministic first, judgment never.** This sensor reports; it does not
   decide. Allowlisted fixtures are still reported here — the guardrail downgrades
   them with the config as evidence.
@@ -32,16 +50,14 @@ secrets hide and where a reviewer's own scanner will find them.
 ## Preflight
 
 ```bash
-uv run .claude/audit-lib/preflight.py
+uv run "$LIB/preflight.py"
 ```
 
-Record the resolved versions into the run's `metadata.json` and compare against
-`context/audit-config/global.json` `toolVersions`. Any tool marked
+Record the resolved versions into `OUT/metadata.json` and compare against
+`audit-config/global.json` `toolVersions`. Any tool marked
 `PENDING-INSTALL` or reported missing is a recorded **skip**, not a failure.
 
 ## Tools & invocations
-
-Let `REPO` = absolute path to the target repo, `RAW` = the run's `raw/` folder.
 
 1. **gitleaks** (primary — fast, full-history, regex + entropy). Emit JSON for
    triage and SARIF as a second format (cheap; ready for GitHub code-scanning):
@@ -78,15 +94,15 @@ will be pushed. Do not limit to `HEAD`.
 ## Normalize
 
 ```bash
-uv run .claude/audit-lib/normalize.py "$REPO" "$RAW" "$RUN/normalized"
+uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"
 ```
 
 ## Outputs
 
 `raw/gitleaks.json`, `raw/gitleaks.sarif`, `raw/trufflehog.json`,
 `raw/detect-secrets.json`, `raw/identity-grep.json`, plus normalized copies. Per-repo fixture allowlists
-live in `context/audit-config/<repo-name>.json` and are consumed by the
-guardrail, not here.
+live in `audit-config/<repo-name>.json` and are consumed by the guardrail, not
+here.
 
 ## Handoff
 

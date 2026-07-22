@@ -6,9 +6,11 @@ description: >-
   vs. noise, assign severity from config policy (not vibes), and emit
   audit-report.md ending in a machine-readable PASS/BLOCK verdict. Finds nothing
   itself — it judges what the sensors found. BLOCK on any unresolved Critical is
-  non-overridable except by a recorded human waiver. Triggers: "triage the audit
+  non-overridable except by a recorded human waiver. Requires the user-specified
+  report folder; refuses to run without one. Triggers: "triage the audit
   findings", "write the audit report", "is this repo safe to publish", "give me
   the publish verdict".
+argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.1"
   owner: Jarryd Adaens
@@ -19,6 +21,31 @@ metadata:
 
 The enforcing half and the AI reasoning layer. It **finds nothing itself**. It
 consumes `raw/` + `normalized/` from the sensors and does three things.
+
+## Required arguments & paths
+
+Invocation: `<target-repo> <report-folder> [run-timestamp]`
+
+- `report-folder` — absolute path where `open-source-audit-report/` lives.
+  **Required: if it was not explicitly provided, STOP and ask — never guess or
+  default.**
+- `run-timestamp` — which run to triage; defaults to the newest
+  `<YYYY-MM-DD_HHMM>` folder under `<report-folder>/open-source-audit-report/`.
+
+Derived: `RUN = <report-folder>/open-source-audit-report/<run-timestamp>`. Reads
+every sensor's `RUN/<sensor-name>/raw|normalized`; writes only
+`RUN/audit-publish-guardrail/audit-report.md`. Config comes from
+`<report-folder>/open-source-audit-report/audit-config/` (`global.json` +
+`<repo-name>.json`).
+
+## Standing Critical check — the report tree itself
+
+Before triaging findings, check whether any of
+`<report-folder>/open-source-audit-report/` is **tracked by the target repo's
+git** (`git -C "$REPO" ls-files "<path>"`). The report tree contains the very
+findings the audit exists to catch (secret locations, names, venting quotes)
+and the personal `audit-config/` watchlists; if any of it is tracked, raise a
+**Critical** finding — it must be untracked, ignored, or deleted before publish.
 
 ## 1. Triage — true positive vs. noise
 
@@ -35,7 +62,7 @@ If a finding cannot be traced to a `raw/` artifact, it does not go in the report
 
 ## 2. Severity in context (policy is data)
 
-Severity comes from `context/audit-config/global.json` → `severityPolicy`, never
+Severity comes from `audit-config/global.json` → `severityPolicy`, never
 from intuition. See `references/severity-rubric.md` for the category → tier map
 and the meaning of each tier:
 
@@ -51,7 +78,7 @@ The guardrail may move a finding within policy **only with cited evidence**
 
 ## 3. Report + verdict
 
-Write `audit-report.md` in the run folder: prioritized findings, each with
+Write `RUN/audit-publish-guardrail/audit-report.md`: prioritized findings, each with
 file, line, evidence snippet, why it is a red flag, and the concrete fix. End
 with a machine-readable verdict block:
 
@@ -70,6 +97,3 @@ generated_from:
 overridable by the persona.** Only the human waives a finding, and waivers are
 recorded in the per-repo config (`waivers.entries`) with a reason. The verdict
 is the validator; the prose is the reasoning.
-
-The report lands beside the existing appraisal reports and follows their shape —
-it is another report type in `context/reports/`.

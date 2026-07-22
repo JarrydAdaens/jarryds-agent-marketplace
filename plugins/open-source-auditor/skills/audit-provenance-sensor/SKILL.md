@@ -5,9 +5,11 @@ description: >-
   Use when auditing a target repo for the "is there code I don't own" risk —
   foreign copyright holders, employer copyright headers, third-party code pasted
   in, and licenses embedded in source files. Runs ScanCode Toolkit for holder /
-  copyright / license / author extraction. Read-only. Triggers: "audit provenance",
-  "check for employer copyright", "did I paste code I don't own", "scan copyright
-  holders before publish".
+  copyright / license / author extraction. Read-only on the target repo: writes
+  only into the user-specified report folder, and refuses to run without one.
+  Triggers: "audit provenance", "check for employer copyright", "did I paste
+  code I don't own", "scan copyright holders before publish".
+argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.1"
   owner: Jarryd Adaens
@@ -22,9 +24,26 @@ a file you claim you authored, third-party code pasted in, a stray license
 notice inside a source file. Deeper than the dependency sensor's license scan —
 that classifies *declared dependency* licenses; this reads the *source itself*.
 
+## Required arguments & paths
+
+Invocation: `<target-repo> <report-folder> [run-timestamp]`
+
+- `REPO` — absolute path of the ONE repo being audited.
+- `report-folder` — absolute path where `open-source-audit-report/` lives.
+  **Required: if it was not explicitly provided, STOP and ask — never guess or
+  default.**
+- `run-timestamp` — the shared `YYYY-MM-DD_HHMM` stamp when part of a
+  persona-led run; mint a fresh one standalone. Never overwrite an earlier run.
+
+Derived: `RUN = <report-folder>/open-source-audit-report/<run-timestamp>`,
+`OUT = RUN/audit-provenance-sensor`, `RAW = OUT/raw`. Config lives in
+`<report-folder>/open-source-audit-report/audit-config/`. `LIB` = the
+`audit-lib/` folder at this plugin's root (`../../audit-lib` relative to this
+SKILL.md).
+
 ## Contract
 
-- **Read-only on the target repo.** All output to the run's `raw/` folder.
+- **Read-only on the target repo.** All output goes only inside `OUT`.
 - Runs after the dependency sensor in the fixed order (both are the legal/SBOM
   cluster): `... → dependency → provenance → hygiene`.
 
@@ -69,8 +88,9 @@ crawl, unrelated apps crashing on failed allocations). Therefore:
 From `scancode.json`, extract and write `raw/provenance-findings.json`:
 
 - **`holders` / `copyright`** — every distinct copyright holder. Red flags:
-  a former employer (cross-check `tone.properNounWatchlist` — e.g. ExampleCorp,
-  AcmeStudios), a vendor name, any holder that is not the repo owner.
+  a former employer (cross-check `tone.properNounWatchlist` in the run's
+  `audit-config/global.json`), a vendor name, any holder that is not the repo
+  owner.
 - **`license_detections` inside source files** — a GPL/AGPL notice embedded in a
   file, or a license that contradicts the repo's Apache-2.0 intent.
 - **`authors` / `emails`** — author tags or emails that point to someone other
@@ -83,6 +103,7 @@ From `scancode.json`, extract and write `raw/provenance-findings.json`:
 
 ## Output
 
-`raw/scancode.json` (full), `raw/provenance-findings.json` (extracted),
-then normalize. Cross-references the dependency sensor's SBOM but does not
-duplicate its dependency-license verdict.
+`raw/scancode.json` (full), `raw/provenance-findings.json` (extracted), then
+normalize (`uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"`).
+Cross-references the dependency sensor's SBOM but does not duplicate its
+dependency-license verdict.

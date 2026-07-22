@@ -4,9 +4,11 @@ description: >-
   Native-linter sweep for the open-source pre-publication audit. Use when
   auditing a target repo for soft quality signals — dead code, commented-out
   blocks, unused imports, style drift, TODO/FIXME census, empty placeholder
-  files — routed by the languages the repo actually contains. Read-only. Triggers:
-  "audit quality", "lint the repo for the audit", "check for dead code before
-  publish", pre-publish quality sweep.
+  files — routed by the languages the repo actually contains. Read-only on the
+  target repo: writes only into the user-specified report folder, and refuses to
+  run without one. Triggers: "audit quality", "lint the repo for the audit",
+  "check for dead code before publish", pre-publish quality sweep.
+argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.1"
   owner: Jarryd Adaens
@@ -20,10 +22,27 @@ target repo. Records which linters ran and which were skipped and why. Catches
 the soft signals a reviewer notices: dead code, commented-out blocks, unused
 imports, style drift.
 
+## Required arguments & paths
+
+Invocation: `<target-repo> <report-folder> [run-timestamp]`
+
+- `REPO` — absolute path of the ONE repo being audited.
+- `report-folder` — absolute path where `open-source-audit-report/` lives.
+  **Required: if it was not explicitly provided, STOP and ask — never guess or
+  default.**
+- `run-timestamp` — the shared `YYYY-MM-DD_HHMM` stamp when part of a
+  persona-led run; mint a fresh one standalone. Never overwrite an earlier run.
+
+Derived: `RUN = <report-folder>/open-source-audit-report/<run-timestamp>`,
+`OUT = RUN/audit-quality-sensor`, `RAW = OUT/raw`. Config lives in
+`<report-folder>/open-source-audit-report/audit-config/`. `LIB` = the
+`audit-lib/` folder at this plugin's root (`../../audit-lib` relative to this
+SKILL.md).
+
 ## Contract
 
 - **Read-only on the target repo.** Linters run in verify/report mode only — no
-  `--fix`, no formatting writes. Output goes to the run's `raw/` folder.
+  `--fix`, no formatting writes. Output goes only inside `OUT`.
 
 ## Language detection
 
@@ -47,7 +66,7 @@ linters. Record skipped languages and the reason in `raw/quality-extras.json`.
   ```
 - **PowerShell:** `PSScriptAnalyzer` if present.
 
-## Additional deterministic checks (script in `scripts/`)
+## Additional deterministic checks (implement as throwaway greps/scripts per run)
 
 - Commented-out code-block detector (heuristic).
 - TODO / FIXME / HACK census.
@@ -58,4 +77,5 @@ Write these to `raw/quality-extras.json`.
 ## Output
 
 One `raw/<linter>.json` per linter run, plus `raw/quality-extras.json`, then
-normalize. Handoff to the guardrail for severity.
+normalize (`uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"`).
+Handoff to the guardrail for severity.

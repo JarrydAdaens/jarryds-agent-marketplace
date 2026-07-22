@@ -7,7 +7,7 @@ every tool that is missing. A sensor NEVER fails because a tool is absent; it
 records the skip and moves on. That skip record is itself audit evidence.
 
 Run standalone to see the current toolchain state:
-    uv run .claude/audit-lib/preflight.py
+    uv run <plugin-root>/audit-lib/preflight.py
 
 Import from a sensor runner:
     from preflight import resolve_tools, ToolStatus

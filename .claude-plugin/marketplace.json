@@ -1,0 +1,17 @@
+{
+  "name": "jarryds-agents",
+  "owner": {
+    "name": "Jarryd Adaens",
+    "email": "jarryd.adaens@outlook.com.au"
+  },
+  "description": "Jarryd's personal marketplace: general-purpose plugins, skills, and agents for agentic coding tools. No framework assumptions - everything here works on any repository.",
+  "plugins": [
+    {
+      "name": "open-source-auditor",
+      "source": "./plugins/open-source-auditor",
+      "description": "Pre-publication open-source audit in one install: a specialist auditor persona plus nine skills - deterministic sensors (secrets, tone, quality, dependency, provenance, hygiene), a triaging PASS/BLOCK guardrail, Apache 2.0 licensing, and post-abort cleanup. Every run writes to an explicit, user-specified report folder.",
+      "category": "auditor",
+      "keywords": ["audit", "open-source", "secrets", "license", "pre-publication", "publish"]
+    }
+  ]
+}

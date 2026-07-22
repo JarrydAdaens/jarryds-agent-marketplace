@@ -5,10 +5,12 @@ description: >-
   auditing a target repo for profanity, frustration venting, or negative
   references to colleagues, employers, or vendors — in commit messages, code
   comments, docs, and the Rails provenance surfaces (complaining.md, thinking.md,
-  dictations, execution logs) where venting is designed to accumulate. Read-only.
-  Expected to over-report; the guardrail separates legitimate/quoted use from
-  real violations. Triggers: "audit tone", "scan for swearing", "check for venting
-  at colleagues", pre-publish tone sweep.
+  dictations, execution logs) where venting is designed to accumulate. Read-only
+  on the target repo: writes only into the user-specified report folder, and
+  refuses to run without one. Expected to over-report; the guardrail separates
+  legitimate/quoted use from real violations. Triggers: "audit tone", "scan for
+  swearing", "check for venting at colleagues", pre-publish tone sweep.
+argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.1"
   owner: Jarryd Adaens
@@ -18,13 +20,30 @@ metadata:
 # Audit — Tone Sensor
 
 No off-the-shelf tool catches personal venting, so this sensor is custom:
-wordlist + pattern grep driven entirely by `context/audit-config/global.json`.
+wordlist + pattern grep driven entirely by the run's `audit-config/global.json`.
 It is **expected to produce false positives** (legitimate uses, quoted text).
 That is correct — separating those is the guardrail's job, not this sensor's.
 
+## Required arguments & paths
+
+Invocation: `<target-repo> <report-folder> [run-timestamp]`
+
+- `REPO` — absolute path of the ONE repo being audited.
+- `report-folder` — absolute path where `open-source-audit-report/` lives.
+  **Required: if it was not explicitly provided, STOP and ask — never guess or
+  default.**
+- `run-timestamp` — the shared `YYYY-MM-DD_HHMM` stamp when part of a
+  persona-led run; mint a fresh one standalone. Never overwrite an earlier run.
+
+Derived: `RUN = <report-folder>/open-source-audit-report/<run-timestamp>`,
+`OUT = RUN/audit-tone-sensor`, `RAW = OUT/raw`. Config lives in
+`<report-folder>/open-source-audit-report/audit-config/` (bootstrap from this
+plugin's `config/` templates if missing). `LIB` = the `audit-lib/` folder at
+this plugin's root (`../../audit-lib` relative to this SKILL.md).
+
 ## Contract
 
-- **Read-only on the target repo.** Output goes only to the run's `raw/` folder.
+- **Read-only on the target repo.** Output goes only inside `OUT`.
 - Reports every match with enough context (file/commit, line, matched pattern,
   surrounding snippet) for the guardrail to judge it.
 
@@ -39,8 +58,8 @@ That is correct — separating those is the guardrail's job, not this sensor's.
 - `profanity` — profanity + personal insults. Always reported (word-boundary).
 - `ventingPatterns` — frustration phrases ("waste of time", "useless") that
   matter most when adjacent to a tool or person noun.
-- `properNounWatchlist` — **employer / colleague / vendor names** (ExampleCorp,
-  AcmeStudios, named individuals, "IT team"). Always reported.
+- `properNounWatchlist` — **employer / colleague / vendor names** (former
+  employers, named individuals, internal teams). Always reported.
 - `contextSensitiveNouns.terms` — common words that are also names (Meta, Google,
   IT). **Reported ONLY when a profanity or ventingPattern appears in the same
   line/sentence.** This stops "meta-workspace" and "metadata" from flooding the
@@ -63,7 +82,11 @@ That is correct — separating those is the guardrail's job, not this sensor's.
 ## Output
 
 `raw/tone-findings.json` — a list of `{surface, file_or_commit, line, list,
-matched, snippet}`. Then normalize with the shared script.
+matched, snippet}`. Then normalize with the shared script:
+
+```bash
+uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"
+```
 
 ## Handoff
 

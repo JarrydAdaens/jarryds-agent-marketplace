@@ -5,9 +5,11 @@ description: >-
   audit run is interrupted, crashed, or resumed — or before starting a new run
   when a previous one did not finish cleanly. Finds orphaned scanner processes
   (ScanCode/python especially), incomplete run folders, and stale artifacts;
-  reports first, kills/prunes only on approval. Triggers: "audit cleanup",
-  "check for orphaned scanners", "the audit crashed", "clean up before
-  re-running the audit".
+  reports first, kills/prunes only on approval. Requires the report folder to
+  inspect run artifacts (process cleanup works without it). Triggers: "audit
+  cleanup", "check for orphaned scanners", "the audit crashed", "clean up
+  before re-running the audit".
+argument-hint: <report-folder>
 metadata:
   version: "0.1"
   owner: Jarryd Adaens
@@ -28,8 +30,11 @@ one's state is unknown.
 
 - **Report first, act second.** Every kill and every folder prune is listed to
   the human before execution; nothing is terminated or deleted silently.
-- Never touches a target repo — only processes and the meta-workspace's
-  `context/reports/audit/` tree.
+- Never touches a target repo — only processes and the
+  `<report-folder>/open-source-audit-report/` tree.
+- `report-folder` is the same path the audit was run with. **If it was not
+  explicitly provided, do Step 1 (processes) and Step 3 (headroom) only, and ask
+  for it before Step 2** — never guess where run folders live.
 
 ## Step 1 — find orphaned scanner processes
 
@@ -59,8 +64,9 @@ matching output** (e.g. `scancode.stderr.txt` with no `scancode.json`), or a
 `raw/` folder that is empty despite the run folder existing.
 
 ```powershell
-$auditRoot = "D:\Code Projects\agentic_rails\context\reports\audit"
-Get-ChildItem $auditRoot -Directory | ForEach-Object {
+$auditRoot = "<report-folder>\open-source-audit-report"
+Get-ChildItem $auditRoot -Directory |
+  Where-Object { $_.Name -ne 'audit-config' } | ForEach-Object {
   Get-ChildItem $_.FullName -Directory -ErrorAction SilentlyContinue
 } | ForEach-Object {
   $raw = Join-Path $_.FullName 'raw'
