@@ -18,11 +18,15 @@ All output lands under `<report-folder>/open-source-audit-report/`:
 open-source-audit-report/
   audit-config/            # your filled-in config (personal - never publish it)
   <YYYY-MM-DD_HHMM>/       # one folder per run/attempt
+    audit-report.html      # durable single-file report: Summary tab + one tab
+                           #   per sensor, every claim linked to raw evidence
     <skill-name>/          # one folder per skill that produced artifacts
       raw/  normalized/
     audit-publish-guardrail/
       audit-report.md      # the PASS/BLOCK verdict
 ```
+
+Each run's `audit-report.html` is self-contained (inline CSS/JS, relative evidence links), so successive passes over a repo can be opened side by side to compare progress.
 
 Re-runs create sibling timestamp folders; nothing is overwritten. The guardrail raises a **Critical** finding if any of the report tree is tracked by the target repo's git — it holds the very findings the audit exists to catch and must never be published.
 

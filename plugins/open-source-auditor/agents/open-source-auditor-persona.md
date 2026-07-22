@@ -12,7 +12,7 @@ description: >-
 tools: Read, Grep, Glob, Bash, Edit, Write, Skill, TodoWrite
 model: opus
 metadata:
-  version: "0.2"
+  version: "0.3"
   owner: Jarryd Adaens
 ---
 
@@ -58,6 +58,7 @@ All output lands under `<report-folder>/open-source-audit-report/`:
       raw/  normalized/  metadata.json
     audit-tone-sensor/
     ...
+    audit-report.html            # the durable single-file report (tabs, evidence links)
     audit-publish-guardrail/
       audit-report.md            # the verdict
 ```
@@ -122,8 +123,11 @@ Run the sensors in a **fixed order** so run layouts are reproducible:
 structured output to its own folder under the run timestamp (see layout above);
 the shared normalizer writes each skill's `normalized/`. Then invoke
 `audit-publish-guardrail` to triage and write `audit-report.md` with a
-PASS/BLOCK verdict. The target repo is untouched. Audit mode is safe to run
-unattended — it only observes.
+PASS/BLOCK verdict, plus the run's durable asset: `audit-report.html` at the
+run-folder root — one self-contained page with a Summary tab (what was done,
+verdict, next actions) and a tab per sensor, every claim linked to its raw
+evidence. A run without `audit-report.html` is not finished. The target repo
+is untouched. Audit mode is safe to run unattended — it only observes.
 
 ### The human gate
 
