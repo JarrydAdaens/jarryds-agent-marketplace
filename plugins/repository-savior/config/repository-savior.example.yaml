@@ -1,0 +1,48 @@
+# Repository Savior persistent configuration.
+# Copy to <migration-root>/config/repository-savior.yaml and fill in your
+# local paths and GitHub owner. The filled-in copy is personal/local data -
+# never commit it to this plugin.
+#
+# There is intentionally NO visibility setting anywhere in this file.
+# The only publication policy is PRIVATE_ONLY, enforced by the
+# github-private-only gateway and its tests.
+
+schema_version: 1
+
+paths:
+  intake: "<absolute-path>/RepositoryMigration/intake"
+  workspace: "<absolute-path>/RepositoryMigration/workspace"
+  completed: "<absolute-path>/RepositoryMigration/completed"
+  verification_clones: "<absolute-path>/RepositoryMigration/verification"
+  reports: "<absolute-path>/RepositoryMigration/reports"
+
+github:
+  target_owner: "<github-owner-slug>"
+  default_description_prefix: "Recovered legacy repository"
+  create_issues: false
+  create_wiki: false
+  create_projects: false
+
+naming:
+  lowercase: false
+  replace_spaces_with: "-"
+  collision_policy: "stop"
+
+history:
+  author_map: "config/authors.map"
+  unknown_author_policy: "stop"
+  default_branch_policy: "preserve-or-explicitly-map"
+  include_closed_mercurial_branches: true
+  include_all_svn_branches: true
+  include_all_tags: true
+
+publication:
+  require_audit_pass: true
+  require_local_verification: true
+  require_remote_privacy_verification: true
+  require_fresh_clone_verification: true
+
+execution:
+  continue_after_repository_failure: true
+  maximum_parallel_repositories: 1
+  retain_failed_workspaces: true
