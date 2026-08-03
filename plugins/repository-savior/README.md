@@ -30,7 +30,7 @@ cloning, and verification for each one.
 
 ## Install
 
-**Claude Code:** add the `jarryds-agents` marketplace, then `/plugin install repository-savior@jarryds-agents`.
+**Claude Code / Codex:** add the `jarryds-agents` marketplace, then `/plugin install repository-savior@jarryds-agents`.
 
 **Cursor:** copy this plugin folder to `%USERPROFILE%\.cursor\plugins\local\repository-savior\` (must contain `.cursor-plugin/plugin.json` at that root), then **Developer: Reload Window**. On Teams/Enterprise, import the marketplace repo from Dashboard → Plugins instead. See the marketplace root `README.md` for details.
 

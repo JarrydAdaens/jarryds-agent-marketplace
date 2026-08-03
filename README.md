@@ -1,6 +1,6 @@
 # jarryds-agent-marketplace
 
-A personal marketplace of skills, agents, and plugins for agentic IDEs (Claude Code and Cursor), collected from across my projects.
+A personal marketplace of skills, agents, and plugins for agentic IDEs (Claude Code, Cursor, and Codex), collected from across my projects.
 
 Everything here is **general-purpose**: each artifact works on any repository, with no assumptions about project structure. That is the admission rule — skills that require a specific framework live with that framework. In particular, skills specific to the Agentic Rails system stay in `agentic_rails_tooling`; this repo holds what was deliberately extracted from it because it wasn't Rails-specific.
 
@@ -8,7 +8,8 @@ Everything here is **general-purpose**: each artifact works on any repository, w
 
 - `.claude-plugin/marketplace.json` — the Claude Code plugin catalog.
 - `.cursor-plugin/marketplace.json` — the Cursor plugin catalog.
-- `plugins/` — installable plugins, one folder each; a single install brings a plugin's whole bundle (skills, agents, shared scripts, config templates). Each plugin carries thin per-tool manifests (`.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`); the payload under `skills/` and `agents/` is shared.
+- `.agents/plugins/marketplace.json` — the Codex plugin catalog.
+- `plugins/` — installable plugins, one folder each; a single install brings a plugin's whole bundle (skills, agents, shared scripts, config templates). Each plugin carries thin per-tool manifests (`.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, `.codex-plugin/plugin.json`); the payload under `skills/` and `agents/` is shared.
 - `source/skills/` — plain skills not yet packaged as plugins (deployed by file copy for now).
 - `context/` — material about this repo itself (notes, plans), never deployed.
 
@@ -23,6 +24,16 @@ Everything here is **general-purpose**: each artifact works on any repository, w
 ```
 
 A local clone path is fine while experimenting.
+
+### Codex
+
+```shell
+/plugin marketplace add <git-url-or-local-path-to-this-repo>
+/plugin install open-source-auditor@jarryds-agents
+/plugin install repository-savior@jarryds-agents
+```
+
+Same local-clone recommendation as Claude Code. After a `git pull`, refresh with `/plugin marketplace update jarryds-agents`. Codex requires `name`, `version`, and `description` in each `.codex-plugin/plugin.json` — bump `version` when you want Codex to treat a push as a distinct plugin update.
 
 ### Cursor
 

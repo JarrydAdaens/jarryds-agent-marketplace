@@ -1,0 +1,24 @@
+{
+  "name": "jarryds-agents",
+  "interface": {
+    "displayName": "Jarryd's Agents"
+  },
+  "plugins": [
+    {
+      "name": "open-source-auditor",
+      "source": {
+        "source": "local",
+        "path": "./plugins/open-source-auditor"
+      },
+      "category": "auditor"
+    },
+    {
+      "name": "repository-savior",
+      "source": {
+        "source": "local",
+        "path": "./plugins/repository-savior"
+      },
+      "category": "migration"
+    }
+  ]
+}

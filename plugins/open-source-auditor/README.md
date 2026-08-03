@@ -6,7 +6,7 @@ Pre-publication audit for open-sourcing a repository, installed as one bundle: a
 
 ## Install
 
-**Claude Code:** add the `jarryds-agents` marketplace, then `/plugin install open-source-auditor@jarryds-agents` — globally if you audit often, or enabled per project.
+**Claude Code / Codex:** add the `jarryds-agents` marketplace, then `/plugin install open-source-auditor@jarryds-agents` — globally if you audit often, or enabled per project.
 
 **Cursor:** copy this plugin folder to `%USERPROFILE%\.cursor\plugins\local\open-source-auditor\` (must contain `.cursor-plugin/plugin.json` at that root), then **Developer: Reload Window**. On Teams/Enterprise, import the marketplace repo from Dashboard → Plugins instead. See the marketplace root `README.md` for details.
 
@@ -40,7 +40,7 @@ External scanner binaries, installed and pinned in your `audit-config/global.jso
 
 ## Known limitations
 
-- Works on Claude Code and Cursor (skills + persona markdown). Persona frontmatter still carries Claude-oriented `tools` / `model` hints; Cursor discovers the agent by `name` + `description` and may ignore those fields.
+- Works on Claude Code, Cursor, and Codex (skills + persona markdown). Persona frontmatter still carries Claude-oriented `tools` / `model` hints; Cursor/Codex discover the agent by `name` + `description` and may ignore those fields.
 - One repo per run, sequentially — the sensors are memory-heavy (ScanCode especially); never fan audits out concurrently.
 - Audit mode is read-only on the target repo except for the report tree when you point the report folder inside it.
 - It never pushes; publishing remains a human action.
