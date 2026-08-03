@@ -28,6 +28,14 @@ cloning, and verification for each one.
 6. **Secrets and dangerous historical content are audited before
    publication.** Private is not remediation.
 
+## Install
+
+**Claude Code:** add the `jarryds-agents` marketplace, then `/plugin install repository-savior@jarryds-agents`.
+
+**Cursor:** copy this plugin folder to `%USERPROFILE%\.cursor\plugins\local\repository-savior\` (must contain `.cursor-plugin/plugin.json` at that root), then **Developer: Reload Window**. On Teams/Enterprise, import the marketplace repo from Dashboard → Plugins instead. See the marketplace root `README.md` for details.
+
+Also install `open-source-auditor` from the same marketplace — the mandatory pre-publication audit step depends on it (or on another auditor that emits `schemas/audit-result.schema.json`).
+
 ## Invocation
 
 The persona drives everything:

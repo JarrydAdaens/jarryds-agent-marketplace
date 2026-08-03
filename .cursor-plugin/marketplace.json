@@ -1,0 +1,26 @@
+{
+  "name": "jarryds-agents",
+  "owner": {
+    "name": "Jarryd Adaens",
+    "email": "jarryd.adaens@outlook.com.au"
+  },
+  "metadata": {
+    "description": "Jarryd's personal marketplace: general-purpose plugins, skills, and agents for agentic coding tools. No framework assumptions - everything here works on any repository."
+  },
+  "plugins": [
+    {
+      "name": "open-source-auditor",
+      "source": "./plugins/open-source-auditor",
+      "description": "Pre-publication open-source audit in one install: a specialist auditor persona plus nine skills - deterministic sensors (secrets, tone, quality, dependency, provenance, hygiene), a triaging PASS/BLOCK guardrail, Apache 2.0 licensing, and post-abort cleanup. Every run writes to an explicit, user-specified report folder.",
+      "category": "auditor",
+      "keywords": ["audit", "open-source", "secrets", "license", "pre-publication", "publish"]
+    },
+    {
+      "name": "repository-savior",
+      "source": "./plugins/repository-savior",
+      "description": "Migrates archived Mercurial and SVN repositories into native Git and publishes them to GitHub as PRIVATE repositories only: an orchestrating persona plus fifteen pipeline skills - discovery, inspection, snapshot, conversion, normalization, publishability and integrity verification, mandatory pre-publication audit, private-only repository creation via a hardened gateway, independent privacy verification, push, fresh-clone proof, and reporting. Every run takes an explicit migration-root argument.",
+      "category": "migration",
+      "keywords": ["migration", "mercurial", "svn", "git", "github", "private", "legacy", "archive"]
+    }
+  ]
+}

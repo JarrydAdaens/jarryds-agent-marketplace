@@ -1,0 +1,8 @@
+{
+  "name": "repository-savior",
+  "description": "Migrates archived Mercurial and SVN repositories into native Git and publishes them to GitHub as PRIVATE repositories only. Ships the orchestrating persona, fifteen narrow migration skills, a private-only GitHub command gateway, and a read-only source fingerprinting gateway. Visibility is not configurable: the only publication policy is PRIVATE_ONLY, enforced by schema, gateway, post-creation verification, and tests. Requires an explicit migration-root argument - it never writes anywhere you did not name.",
+  "author": {
+    "name": "Jarryd Adaens"
+  },
+  "keywords": ["migration", "mercurial", "svn", "git", "github", "private", "legacy", "archive"]
+}

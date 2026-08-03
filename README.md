@@ -1,21 +1,50 @@
 # jarryds-agent-marketplace
 
-A personal marketplace of skills, agents, and plugins for agentic IDEs (Claude Code and Codex), collected from across my projects.
+A personal marketplace of skills, agents, and plugins for agentic IDEs (Claude Code and Cursor), collected from across my projects.
 
 Everything here is **general-purpose**: each artifact works on any repository, with no assumptions about project structure. That is the admission rule — skills that require a specific framework live with that framework. In particular, skills specific to the Agentic Rails system stay in `agentic_rails_tooling`; this repo holds what was deliberately extracted from it because it wasn't Rails-specific.
 
 ## Layout
 
 - `.claude-plugin/marketplace.json` — the Claude Code plugin catalog.
-- `plugins/` — installable plugins, one folder each; a single install brings a plugin's whole bundle (skills, agents, shared scripts, config templates).
+- `.cursor-plugin/marketplace.json` — the Cursor plugin catalog.
+- `plugins/` — installable plugins, one folder each; a single install brings a plugin's whole bundle (skills, agents, shared scripts, config templates). Each plugin carries thin per-tool manifests (`.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`); the payload under `skills/` and `agents/` is shared.
 - `source/skills/` — plain skills not yet packaged as plugins (deployed by file copy for now).
 - `context/` — material about this repo itself (notes, plans), never deployed.
+
+## Registering and installing
+
+### Claude Code
+
+```shell
+/plugin marketplace add <git-url-or-local-path-to-this-repo>
+/plugin install open-source-auditor@jarryds-agents
+/plugin install repository-savior@jarryds-agents
+```
+
+A local clone path is fine while experimenting.
+
+### Cursor
+
+These plugins ship skills and agents only (no hooks), so the shared payload works as-is once Cursor can see the plugin.
+
+**Local / personal (recommended while private):**
+
+1. Copy each plugin folder into `%USERPROFILE%\.cursor\plugins\local\<plugin-name>\` (on macOS/Linux: `~/.cursor/plugins/local/<plugin-name>/`). The folder you place there must contain `.cursor-plugin/plugin.json` at its root — i.e. copy `plugins/open-source-auditor` to `...\local\open-source-auditor`, not the whole marketplace repo.
+2. Prefer a real copy over a symlink to a path outside `plugins/local` — current Cursor builds often reject external symlink targets.
+3. Run **Developer: Reload Window**.
+4. Confirm skills and agents under **Customize**.
+
+**Team Marketplace (Teams/Enterprise):** import this GitHub repo from **Dashboard → Plugins**, then install from Customize. Enable Auto Refresh if you want push updates.
+
+**Public Cursor Marketplace:** submit later via [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish) if you want curated listing; not required for personal use.
 
 ## Installable plugins
 
 | Plugin | Purpose |
 | --- | --- |
 | `open-source-auditor` | Pre-publication open-source audit in one install: auditor persona + six deterministic sensors (secrets, tone, quality, dependency, provenance, hygiene), a triaging PASS/BLOCK guardrail, Apache 2.0 licensing, and post-abort cleanup. Writes only to an explicit, user-specified report folder. See `plugins/open-source-auditor/README.md`. |
+| `repository-savior` | Migrates archived Mercurial/SVN repos to native Git and publishes them to GitHub as **private** only: orchestrating persona + fifteen pipeline skills, private-only gateways, resumable state machine. Requires an explicit migration-root. See `plugins/repository-savior/README.md`. |
 
 ## Skills awaiting packaging (`source/skills/`)
 
