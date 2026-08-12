@@ -1,0 +1,6 @@
+{
+  "name": "game-golden-screenshot-verifier",
+  "description": "Engine-independent runtime game verifier using deterministic input, screenshots, and versioned goldens.",
+  "author": { "name": "Jarryd Adaens" },
+  "keywords": ["game", "screenshot", "golden", "verifier"]
+}

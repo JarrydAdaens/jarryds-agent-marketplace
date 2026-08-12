@@ -2,7 +2,7 @@
 
 A personal marketplace of skills, agents, and plugins for agentic IDEs (Claude Code, Cursor, and Codex), collected from across my projects.
 
-Everything here is **general-purpose**: each artifact works on any repository, with no assumptions about project structure. That is the admission rule — skills that require a specific framework live with that framework. In particular, skills specific to the Agentic Rails system stay in `agentic_rails_tooling`; this repo holds what was deliberately extracted from it because it wasn't Rails-specific.
+This is deliberately **personal and opinionated**. Plugins may target a technology stack, but Agentic Rails framework policy stays in `agentic_rails_tooling` or `agentic_rails_marketplace`.
 
 ## Layout
 
@@ -37,7 +37,13 @@ Same local-clone recommendation as Claude Code. After a `git pull`, refresh with
 
 ### Cursor
 
-These plugins ship skills and agents only (no hooks), so the shared payload works as-is once Cursor can see the plugin.
+Register the Git marketplace from Cursor CLI:
+
+```shell
+agent plugin marketplace add <git-url-to-this-repo>
+```
+
+Then install the desired plugin from **Customize → Marketplace**. For local development, `agent --plugin-dir <path-to-plugin>` loads one plugin directly; the `%USERPROFILE%\.cursor\plugins\local\` workflow below remains useful for Cursor desktop.
 
 **Local / personal (recommended while private):**
 
@@ -56,6 +62,8 @@ These plugins ship skills and agents only (no hooks), so the shared payload work
 | --- | --- |
 | `open-source-auditor` | Pre-publication open-source audit in one install: auditor persona + six deterministic sensors (secrets, tone, quality, dependency, provenance, hygiene), a triaging PASS/BLOCK guardrail, Apache 2.0 licensing, and post-abort cleanup. Writes only to an explicit, user-specified report folder. See `plugins/open-source-auditor/README.md`. |
 | `repository-savior` | Migrates archived Mercurial/SVN repos to native Git and publishes them to GitHub as **private** only: orchestrating persona + fifteen pipeline skills, private-only gateways, resumable state machine. Requires an explicit migration-root. See `plugins/repository-savior/README.md`. |
+| `game-golden-screenshot-verifier` | Engine-independent runtime smoke verifier for games using deterministic input, screenshots, and versioned goldens. |
+| `wpf-visual-quality-gate` | Evaluator-run visual quality gate for WPF desktop UI changes using real input and screenshot evidence. |
 
 ## Skills awaiting packaging (`source/skills/`)
 

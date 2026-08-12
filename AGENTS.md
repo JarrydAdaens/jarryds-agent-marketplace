@@ -4,7 +4,7 @@ This file provides repository guidance for agentic IDEs and coding agents workin
 
 ## What this repository is
 
-`jarryds-agent-marketplace` is Jarryd's **personal marketplace** of skills, agents, and plugins for agentic coding tools. Everything here is general-purpose: each artifact works on any repository, with no framework assumptions. Artifacts specific to the Agentic Rails framework live in `agentic_rails_tooling`; lifecycle artifacts for that framework live in `agentic_rails_marketplace`. This repo is neither — it is the home for personal capability that outgrew, or never belonged to, a framework.
+`jarryds-agent-marketplace` is Jarryd's **personal, opinionated marketplace** of skills, agents, and plugins for agentic coding tools. Artifacts may be general-purpose or deliberately technology-specific, but they must not impose Agentic Rails framework policy. Framework artifacts live in `agentic_rails_tooling`; framework-wide lifecycle guardrails live in `agentic_rails_marketplace`.
 
 ## Layout
 

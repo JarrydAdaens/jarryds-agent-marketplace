@@ -4,7 +4,7 @@
     "name": "Jarryd Adaens",
     "email": "jarryd.adaens@outlook.com.au"
   },
-  "description": "Jarryd's personal marketplace: general-purpose plugins, skills, and agents for agentic coding tools. No framework assumptions - everything here works on any repository.",
+  "description": "Jarryd's personal, opinionated plugins, skills, and agents for agentic coding tools.",
   "plugins": [
     {
       "name": "open-source-auditor",
@@ -19,6 +19,20 @@
       "description": "Migrates archived Mercurial and SVN repositories into native Git and publishes them to GitHub as PRIVATE repositories only: an orchestrating persona plus fifteen pipeline skills - discovery, inspection, snapshot, conversion, normalization, publishability and integrity verification, mandatory pre-publication audit, private-only repository creation via a hardened gateway, independent privacy verification, push, fresh-clone proof, and reporting. Every run takes an explicit migration-root argument.",
       "category": "migration",
       "keywords": ["migration", "mercurial", "svn", "git", "github", "private", "legacy", "archive"]
+    },
+    {
+      "name": "game-golden-screenshot-verifier",
+      "source": "./plugins/game-golden-screenshot-verifier",
+      "description": "Engine-independent runtime game verifier using deterministic input, screenshots, and versioned goldens.",
+      "category": "verifier",
+      "keywords": ["game", "screenshot", "golden", "verifier"]
+    },
+    {
+      "name": "wpf-visual-quality-gate",
+      "source": "./plugins/wpf-visual-quality-gate",
+      "description": "Evaluator-run visual quality gate for WPF apps using real input and screenshot evidence.",
+      "category": "verifier",
+      "keywords": ["wpf", "ui", "screenshot", "quality-gate"]
     }
   ]
 }

@@ -16,6 +16,8 @@ eggs/
 .eggs/
 lib/
 lib64/
+!plugins/game-golden-screenshot-verifier/skills/game-golden-screenshot-verifier/lib/
+!plugins/game-golden-screenshot-verifier/skills/game-golden-screenshot-verifier/lib/**
 parts/
 sdist/
 var/

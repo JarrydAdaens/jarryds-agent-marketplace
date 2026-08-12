@@ -19,6 +19,16 @@
         "path": "./plugins/repository-savior"
       },
       "category": "migration"
+    },
+    {
+      "name": "game-golden-screenshot-verifier",
+      "source": { "source": "local", "path": "./plugins/game-golden-screenshot-verifier" },
+      "category": "verifier"
+    },
+    {
+      "name": "wpf-visual-quality-gate",
+      "source": { "source": "local", "path": "./plugins/wpf-visual-quality-gate" },
+      "category": "verifier"
     }
   ]
 }
