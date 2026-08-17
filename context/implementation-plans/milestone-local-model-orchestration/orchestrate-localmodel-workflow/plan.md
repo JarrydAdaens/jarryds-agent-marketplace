@@ -6,6 +6,7 @@
 - Status: `In Progress`
 - Owner: `Jarryd Adaens`
 - Last Updated: `17 August 2026`
+- Revision: paths updated after the per-host marketplace split (`plugins/<host>/orchestrate-localmodel-workflow/`; Claude, Codex, and Cursor are independent copies).
 
 ## Linked Context
 
@@ -35,14 +36,14 @@ The Boss's governing purpose is that **the work does not stop until it is comple
 
 ### In Scope
 
-- `plugins/orchestrate-localmodel-workflow/` as an installable plugin:
+- `plugins/<host>/orchestrate-localmodel-workflow/` as an installable plugin (one copy per host root under `plugins/claude/`, `plugins/codex/`, and `plugins/cursor/`; copies may drift):
   - `skills/orchestrate-localmodel-workflow/SKILL.md` — the orchestration skill.
   - `references/pi-session-operations.md` — supervising pi as an external process: single-session enforcement, RPC transport, liveness, teardown, rig-down handling.
   - `references/worker-contract.md` — the dispatch payload spec, prompt template, scope fence, and the tenacity doctrine handed to the worker.
   - `references/escalation-ladder.md` — the three-attempt ladder, the frontier rescue, and the incident report format.
   - `scripts/pi-rpc-client.mjs` — the JSONL RPC client.
-  - `README.md`, plus `.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, `.codex-plugin/plugin.json`.
-- Registration in all three catalogs: `.claude-plugin/marketplace.json`, `.cursor-plugin/marketplace.json`, `.agents/plugins/marketplace.json`.
+  - `README.md`, plus one host manifest per copy (`.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, or `.codex-plugin/plugin.json` matching its root).
+- Registration in each host's catalog: `.claude-plugin/marketplace.json` → `plugins/claude/`, `.cursor-plugin/marketplace.json` → `plugins/cursor/`, `.agents/plugins/marketplace.json` → `plugins/codex/`.
 - A run-folder layout for durable, compaction-surviving state.
 - `claude plugin validate .` clean from the repo root.
 
@@ -169,7 +170,7 @@ The frontier rescue is a real subagent at frontier capability and high reasoning
 ### Constraints
 
 - **Serial by construction.** The rig is one RTX 3090 serving one model; a second concurrent session starves rather than slows.
-- **Plugin isolation.** Installs copy the plugin folder into a per-tool cache, so `../` paths break. Every reference and script must live inside `plugins/orchestrate-localmodel-workflow/`.
+- **Plugin isolation.** Installs copy the plugin folder into a per-tool cache, so `../` paths break. Every reference and script must live inside the plugin folder (e.g. `plugins/claude/orchestrate-localmodel-workflow/` or the equivalent under `plugins/codex/` / `plugins/cursor/`).
 - **This repo's stated rule is that artifacts must not impose Agentic Rails framework policy.** This one is rails-dependent by design — it reads `context/implementation-plans/<milestone>/<story>/plan.md`, writes run state under `context/`, and marks source stories complete. Accepted as a **documented exception**, decided 17 August 2026, on the grounds that the author works exclusively in Agentic Rails. Record it in the plugin README so it is not mistaken for drift.
 - The Boss runs on the session's own model and does not switch it.
 - The target project must have a runnable test harness. The workflow requires the command and must never invent one.
@@ -234,7 +235,7 @@ The load-bearing content of the skill. Each cost time to learn, and each reads l
 
 2. **Scaffold the plugin.**
    - Why: This repo's hard rules are mechanical and easiest to satisfy up front.
-   - Edits: `plugins/orchestrate-localmodel-workflow/` with `skills/orchestrate-localmodel-workflow/SKILL.md`, `references/`, `scripts/`, `README.md`; the three per-plugin manifests (`version` set **only** in `.codex-plugin/plugin.json`); entries added to all three catalogs.
+   - Edits: `plugins/<host>/orchestrate-localmodel-workflow/` with `skills/orchestrate-localmodel-workflow/SKILL.md`, `references/`, `scripts/`, `README.md`; one host manifest per copy (`version` set **only** in `.codex-plugin/plugin.json`); entries added to each host's catalog.
    - Dependencies: step 1.
 
 3. **Write `references/pi-session-operations.md`.**
@@ -366,7 +367,7 @@ The load-bearing content of the skill. Each cost time to learn, and each reads l
 
 ## Execution Log
 
-Implemented 17 August 2026 in `jarryds-agent-marketplace` as `plugins/orchestrate-localmodel-workflow/`.
+Implemented 17 August 2026 in `jarryds-agent-marketplace` as `plugins/orchestrate-localmodel-workflow/` (pre-split). Repathed 17 August 2026 to `plugins/<host>/orchestrate-localmodel-workflow/` per the per-host marketplace split.
 
 | Step | Result |
 | --- | --- |

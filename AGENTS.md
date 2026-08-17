@@ -8,10 +8,10 @@ This file provides repository guidance for agentic IDEs and coding agents workin
 
 ## Layout
 
-- `.claude-plugin/marketplace.json` — the Claude Code plugin catalog. Every installable plugin must be listed here.
-- `.cursor-plugin/marketplace.json` — the Cursor plugin catalog. Same plugins, Cursor's manifest layout.
-- `.agents/plugins/marketplace.json` — the Codex plugin catalog. Same plugins, Codex's local-source layout.
-- `plugins/` — one folder per installable plugin. Payload lives in the default component directories (`skills/`, `agents/`), discovered natively on install. Thin per-tool manifests sit beside the payload: `.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, and `.codex-plugin/plugin.json`.
+- `.claude-plugin/marketplace.json` — the Claude Code plugin catalog. Lists only `plugins/claude/*`.
+- `.cursor-plugin/marketplace.json` — the Cursor plugin catalog. Lists only `plugins/cursor/*`.
+- `.agents/plugins/marketplace.json` — the Codex plugin catalog. Lists only `plugins/codex/*`.
+- `plugins/` — three host roots: `plugins/claude/`, `plugins/codex/`, and `plugins/cursor/`. Each holds only the plugins that host supports. A plugin available on more than one host is a separate copy under each root, not a shared payload. Payload lives in the default component directories (`skills/`, `agents/`), discovered natively on install. Each plugin folder carries exactly one host manifest: `.claude-plugin/plugin.json` under `plugins/claude/`, `.cursor-plugin/plugin.json` under `plugins/cursor/`, `.codex-plugin/plugin.json` under `plugins/codex/`. A plugin folder with more than one `.*-plugin/` directory is a bug.
 - `source/skills/` — plain skills not yet packaged as plugins (deployed by file copy for now). The goal is to migrate families here into `plugins/` over time.
 - `context/` — material about this repo itself (notes, plans). Never deployed or installed.
 
@@ -22,7 +22,7 @@ This file provides repository guidance for agentic IDEs and coding agents workin
 - **No personal data in the repo.** This repo is public. Watchlists, employer/colleague names, credentials, and machine-specific paths belong in local config the user fills in from shipped sanitized templates — never in committed files.
 - **Plugins that write per-project output must take the output location as an explicit argument** and refuse to run without it — never guess or default a write location into someone's repository.
 - **Do not set `version` in `.claude-plugin/plugin.json` or `.cursor-plugin/plugin.json`.** Those tools version by commit SHA. **Do set and maintain `version` in `.codex-plugin/plugin.json`** — Codex requires `name`, `version`, and `description`.
-- **Keep all three catalogs in sync.** Adding or removing a plugin means updating `.claude-plugin/marketplace.json`, `.cursor-plugin/marketplace.json`, and `.agents/plugins/marketplace.json`, plus all three per-plugin manifests.
+- **Add plugins only to the hosts that support them.** Create the folder under `plugins/<host>/`, add that host's manifest only, and list it only in that host's catalog. Do not add stub manifests "for completeness," and do not keep all three catalogs listing the same plugins by default. Copies under different host roots may drift.
 - **Plugin `name` is a stable identifier** — renames need a migration note, not a silent change.
 
 ## Conventions
@@ -30,5 +30,5 @@ This file provides repository guidance for agentic IDEs and coding agents workin
 - File and folder names are kebab-case except tool-mandated names (`SKILL.md`, `AGENT.md`, `README.md`, `AGENTS.md`, `CLAUDE.md`) and language-idiomatic code files. American English throughout.
 - Every plugin folder has a `README.md` stating what it does, how to invoke it, what the consuming machine must provide, and known limitations.
 - Skill frontmatter carries `name` (matching the folder), a "Use when…" `description`, an `argument-hint` when the skill takes arguments, and `metadata.version`.
-- Validate before committing plugin changes: `claude plugin validate .` from the repo root (Claude layout). For Cursor, confirm each plugin has `.cursor-plugin/plugin.json` and that marketplace `source` paths resolve, then smoke-test via `~/.cursor/plugins/local/<plugin>/` + Reload Window. For Codex, confirm `.agents/plugins/marketplace.json` local sources and each `.codex-plugin/plugin.json` has `name`, `version`, and `description`.
+- Validate before committing plugin changes: `claude plugin validate .` from the repo root (Claude layout). For Cursor, confirm each plugin under `plugins/cursor/` has `.cursor-plugin/plugin.json` and that the Cursor catalog `source` paths resolve, then smoke-test via `~/.cursor/plugins/local/<plugin>/` + Reload Window. For Codex, confirm `.agents/plugins/marketplace.json` local sources under `plugins/codex/` and each `.codex-plugin/plugin.json` has `name`, `version`, and `description`.
 - Commit messages follow the structured `commit-log` format (heading ≤72 chars, `~ Problem:` / body lines / `~ Resolution:`).

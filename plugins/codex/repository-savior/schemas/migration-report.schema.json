@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "repository-savior/migration-report.schema.json",
+  "title": "Repository Savior migration report",
+  "description": "Machine-readable final report (reports/<repository-name>.migration.json), written alongside the human-readable Markdown report.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repository",
+    "source",
+    "converter",
+    "mappings",
+    "counts",
+    "audit",
+    "github",
+    "verification",
+    "warnings",
+    "final_status"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "repository": { "type": "string", "minLength": 1 },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "path", "fingerprint"],
+      "properties": {
+        "type": { "enum": ["mercurial", "svn", "svn-working-copy"] },
+        "path": { "type": "string" },
+        "fingerprint": { "type": "string", "description": "Aggregate SHA-256 from the source-read-only gateway." }
+      }
+    },
+    "converter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "version"],
+      "properties": {
+        "tool": { "type": "string" },
+        "version": { "type": "string", "description": "Exact version or pinned commit of the converter." }
+      }
+    },
+    "mappings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "authors": { "type": "object", "additionalProperties": { "type": "string" } },
+        "branches": { "type": "object", "additionalProperties": { "type": "string" } },
+        "tags": { "type": "object", "additionalProperties": { "type": "string" } },
+        "default_branch": { "type": "string" }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_revisions", "git_commits"],
+      "properties": {
+        "source_revisions": { "type": "integer", "minimum": 0 },
+        "git_commits": { "type": "integer", "minimum": 0 },
+        "count_deviation_explanation": { "type": "string", "description": "Required in prose when counts differ; the difference must be explained and accepted by a specific rule." }
+      }
+    },
+    "large_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "bytes"],
+        "properties": {
+          "path": { "type": "string" },
+          "bytes": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result", "report_path"],
+      "properties": {
+        "result": { "enum": ["pass", "fail", "requires_human_decision"] },
+        "report_path": { "type": "string" }
+      }
+    },
+    "github": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "name", "privacy_verified"],
+      "properties": {
+        "owner": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string" },
+        "privacy_verified": { "type": "boolean" }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["local", "fresh_clone"],
+      "properties": {
+        "local": { "enum": ["passed", "failed", "not-run"] },
+        "fresh_clone": { "enum": ["passed", "failed", "not-run"] }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "accepted_deviations": { "type": "array", "items": { "type": "string" } },
+    "final_status": {
+      "enum": ["COMPLETE", "BLOCKED", "FAILED", "REQUIRES_HUMAN_DECISION"]
+    }
+  }
+}

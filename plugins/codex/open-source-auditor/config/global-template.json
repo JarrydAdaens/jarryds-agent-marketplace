@@ -1,0 +1,108 @@
+{
+  "_comment": "Shared audit configuration template. Copy to <report-folder>/audit-config/global.json and fill in the personal fields (owner, watchlists, tool versions). Severity policy is DATA, not vibes: the guardrail reads it, it does not invent it. Never commit your filled-in copy to a repo you intend to publish.",
+  "version": "0.2.0",
+  "owner": "<your name>",
+  "copyrightHolder": "<your name>",
+
+  "toolVersions": {
+    "_comment": "Pin the versions installed on your machine so a version bump is visible in the normalized diff, never silently absorbed. 'PENDING-INSTALL' = not yet installed; that sensor records a skip.",
+    "gitleaks": "PENDING-INSTALL",
+    "trufflehog": "PENDING-INSTALL",
+    "detect-secrets": "PENDING-INSTALL",
+    "ruff": "PENDING-INSTALL",
+    "eslint": "PENDING (per-repo; resolved from the repo's own node_modules when it has a JS/TS config)",
+    "dotnet-format": "PENDING-INSTALL",
+    "syft": "PENDING-INSTALL",
+    "grype": "PENDING-INSTALL",
+    "trivy": "PENDING-INSTALL",
+    "lychee": "PENDING-INSTALL",
+    "codespell": "PENDING-INSTALL",
+    "git-filter-repo": "uvx-managed (latest)",
+    "scancode": "PENDING-INSTALL"
+  },
+
+  "severityPolicy": {
+    "_comment": "Maps a finding category to a default severity. The guardrail may raise or lower within a category ONLY with cited evidence (e.g. an allowlisted fixture downgrades a secret hit to noise). Critical findings force BLOCK and are non-overridable except by a recorded human waiver.",
+    "critical": [
+      "live-secret",
+      "company-identity-in-history",
+      "copyleft-dependency-in-apache-repo",
+      "colleague-directed-venting",
+      "foreign-copyright-holder",
+      "pasted-third-party-code"
+    ],
+    "high": [
+      "dead-secret-in-history",
+      "profanity-in-commit-message",
+      "broken-readme-claim",
+      "employer-copyright-header",
+      "unexpected-license-in-source"
+    ],
+    "medium": [
+      "dead-code",
+      "commented-out-code-block",
+      "dead-link",
+      "typo",
+      "known-vulnerability"
+    ],
+    "low": [
+      "todo-fixme-census",
+      "undocumented-harmless-branch",
+      "weak-copyleft-dependency"
+    ]
+  },
+
+  "tone": {
+    "_comment": "Matching is CASE-INSENSITIVE with WORD BOUNDARIES (\\b...\\b) - mandatory. Substring-prone words like 'arse'/'crap'/'ass' otherwise match parse/scrap/class. The sensor over-reports on purpose; the guardrail separates quoted/legitimate use from real violations. properNounWatchlist = names you never want in a published repo (employers, colleagues, internal teams) - PERSONAL DATA, fill in locally and never publish your filled-in config.",
+    "profanity": [
+      "fuck", "fucking", "fucked", "fucker", "motherfucker", "shit", "shitty",
+      "bullshit", "shit the bed", "cunt", "bastard", "bitch", "dick", "dickhead",
+      "prick", "wanker", "twat", "bollocks", "arse", "arsehole", "asshole",
+      "dipshit", "crap", "damn", "goddamn", "piss off", "pissed", "wtf"
+    ],
+    "ventingPatterns": [
+      "useless", "idiot", "idiotic", "moron", "moronic", "stupid", "dumb",
+      "incompetent", "clueless", "brain-dead", "pathetic", "lazy",
+      "hate this", "waste of time", "waste of space", "piece of shit",
+      "garbage", "pointless", "worst ever", "so bad", "a joke"
+    ],
+    "properNounWatchlist": [],
+    "contextSensitiveNouns": {
+      "_comment": "Common words that are also names/vendors. Reported ONLY when a profanity or ventingPattern appears in the same line/sentence, so ordinary technical use doesn't flood the report.",
+      "terms": []
+    },
+    "provenanceSurfaces": [
+      "**/complaining.md",
+      "**/thinking.md",
+      "**/*dictation*",
+      "**/execution-log*",
+      "## Complaints",
+      "## Friction"
+    ]
+  },
+
+  "hygiene": {
+    "codespellIgnoreWords": [],
+    "_comment": "codespellIgnoreWords: project coinages that would false-positive. Extend as new ones surface."
+  },
+
+  "license": {
+    "spdx": "Apache-2.0",
+    "year": 2026,
+    "noticeProjectPrefix": "<project name>",
+    "applyPerFileHeaders": {
+      "_comment": "true = stamp the short Apache header into source files of this type; false = LICENSE + NOTICE pair is sufficient (markdown-heavy repos).",
+      ".cs": true,
+      ".py": true,
+      ".ts": true,
+      ".tsx": true,
+      ".js": true,
+      ".ps1": true,
+      ".md": false,
+      ".json": false,
+      ".txt": false,
+      ".yaml": false,
+      ".yml": false
+    }
+  }
+}

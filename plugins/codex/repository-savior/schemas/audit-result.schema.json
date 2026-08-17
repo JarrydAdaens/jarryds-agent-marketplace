@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "repository-savior/audit-result.schema.json",
+  "title": "Repository Savior audit result",
+  "description": "Structured result returned by the external auditor over the complete converted Git history. Only result 'pass' permits publication; making the repository private is never remediation for a finding.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["repository", "result", "blocking_findings", "warnings", "report_path"],
+  "properties": {
+    "repository": { "type": "string", "minLength": 1 },
+    "result": { "enum": ["pass", "fail", "requires_human_decision"] },
+    "blocking_findings": { "type": "array", "items": { "type": "string" } },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "report_path": { "type": "string", "minLength": 1 }
+  }
+}

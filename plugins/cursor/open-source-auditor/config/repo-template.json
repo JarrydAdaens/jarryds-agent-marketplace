@@ -1,0 +1,25 @@
+{
+  "_comment": "Per-repo audit overrides. Copy to <report-folder>/audit-config/<repo-name>.json and fill it in. The guardrail consumes these at triage time; the sensors still report everything, the config only changes how a finding is classified.",
+  "repo": "<repo-folder-name>",
+  "remote": "<public remote URL, e.g. https://github.com/<you>/<repo>.git>",
+
+  "secretAllowlist": {
+    "_comment": "If the secret scanner flags a key that is FAKE on purpose (a dummy key inside a test/example file), list it here so the report stops calling it a real leak. Only fill it when a scan flags a deliberate fake.",
+    "entries": []
+  },
+
+  "documentedExperimentBranches": {
+    "_comment": "If the repo has extra branches that are a deliberate experiment worth keeping, list them here. Then the audit says 'add a README note pointing at this branch' instead of 'delete this stale branch'.",
+    "entries": []
+  },
+
+  "waivers": {
+    "_comment": "Human-approved waivers of findings that would otherwise BLOCK. Only the human writes these. Each needs findingId + reason + date. A waiver is the ONLY way a Critical finding stops blocking publish.",
+    "entries": []
+  },
+
+  "readmeClaimOverrides": {
+    "_comment": "Optional: README claims the deterministic check can't resolve but you have manually verified (e.g. a command that exists behind a wrapper). Documents why a flagged claim is actually fine.",
+    "entries": []
+  }
+}

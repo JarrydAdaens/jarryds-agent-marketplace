@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "repository-savior/state.schema.json",
+  "title": "Repository Savior migration state",
+  "description": "Durable per-repository state machine record (workspace/<repository-id>/state.json). A rerun resumes from the last successfully verified state and never blindly repeats destructive or remote operations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "repository_id", "name", "source_type", "source_path", "current_state", "transitions"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "repository_id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "source_type": { "enum": ["mercurial", "svn", "svn-working-copy", "git", "plain-folder", "unknown"] },
+    "source_path": { "type": "string", "minLength": 1 },
+    "current_state": { "$ref": "#/$defs/state" },
+    "github": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string" }
+      }
+    },
+    "transitions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/transition" }
+    }
+  },
+  "$defs": {
+    "state": {
+      "enum": [
+        "DISCOVERED",
+        "INSPECTED",
+        "SOURCE_SNAPSHOTTED",
+        "CONVERTED",
+        "LOCAL_VERIFIED",
+        "AUDIT_REQUESTED",
+        "AUDIT_PASSED",
+        "REMOTE_CREATED",
+        "REMOTE_PRIVACY_VERIFIED",
+        "PUSHED",
+        "RECLONED",
+        "REMOTE_VERIFIED",
+        "COMPLETE",
+        "BLOCKED",
+        "FAILED",
+        "REQUIRES_HUMAN_DECISION"
+      ]
+    },
+    "transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timestamp", "from", "to", "tool", "result"],
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "from": { "$ref": "#/$defs/state" },
+        "to": { "$ref": "#/$defs/state" },
+        "tool": { "type": "string", "description": "Tool name and version; never a raw command line containing secrets." },
+        "command_category": { "type": "string", "description": "Category of command executed, without secrets." },
+        "input_fingerprint": { "type": "string" },
+        "output_fingerprint": { "type": "string" },
+        "result": { "enum": ["success", "failure", "blocked", "requires_human_decision"] },
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "report_paths": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

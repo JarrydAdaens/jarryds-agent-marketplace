@@ -1,0 +1,17 @@
+# Author identity map. Copy to <migration-root>/config/authors.map and
+# fill in every identity found by inspect-source-history. The filled-in
+# copy contains real names and emails - keep it local, never commit it
+# to this plugin.
+#
+# Mercurial (hg-fast-export) entry format:
+#   "source identity"="Full Name <email@example.com>"
+#
+# SVN (git svn --authors-file) entry format:
+#   loginname = Full Name <email@example.com>
+#
+# Policy: unknown_author_policy is "stop" - conversion refuses to guess.
+# When multiple identities are plausible for one source author, the human
+# decides; the agent must not infer.
+
+# "olduser"="Example Person <example.person@example.com>"
+# olduser = Example Person <example.person@example.com>

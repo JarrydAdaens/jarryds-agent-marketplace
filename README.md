@@ -6,10 +6,10 @@ This is deliberately **personal and opinionated**. Plugins may target a technolo
 
 ## Layout
 
-- `.claude-plugin/marketplace.json` — the Claude Code plugin catalog.
-- `.cursor-plugin/marketplace.json` — the Cursor plugin catalog.
-- `.agents/plugins/marketplace.json` — the Codex plugin catalog.
-- `plugins/` — installable plugins, one folder each; a single install brings a plugin's whole bundle (skills, agents, shared scripts, config templates). Each plugin carries thin per-tool manifests (`.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, `.codex-plugin/plugin.json`); the payload under `skills/` and `agents/` is shared.
+- `.claude-plugin/marketplace.json` — the Claude Code plugin catalog (`plugins/claude/*` only).
+- `.cursor-plugin/marketplace.json` — the Cursor plugin catalog (`plugins/cursor/*` only).
+- `.agents/plugins/marketplace.json` — the Codex plugin catalog (`plugins/codex/*` only).
+- `plugins/` — three host roots (`claude/`, `codex/`, `cursor/`). Each plugin folder carries exactly one host manifest matching its root. A plugin supported on more than one host is duplicated per root and may drift.
 - `source/skills/` — plain skills not yet packaged as plugins (deployed by file copy for now).
 - `context/` — material about this repo itself (notes, plans), never deployed.
 
@@ -47,7 +47,7 @@ Then install the desired plugin from **Customize → Marketplace**. For local de
 
 **Local / personal (recommended while private):**
 
-1. Copy each plugin folder into `%USERPROFILE%\.cursor\plugins\local\<plugin-name>\` (on macOS/Linux: `~/.cursor/plugins/local/<plugin-name>/`). The folder you place there must contain `.cursor-plugin/plugin.json` at its root — i.e. copy `plugins/open-source-auditor` to `...\local\open-source-auditor`, not the whole marketplace repo.
+1. Copy each plugin folder into `%USERPROFILE%\.cursor\plugins\local\<plugin-name>\` (on macOS/Linux: `~/.cursor/plugins/local/<plugin-name>/`). The folder you place there must contain `.cursor-plugin/plugin.json` at its root — i.e. copy `plugins/cursor/open-source-auditor` to `...\local\open-source-auditor`, not the whole marketplace repo.
 2. Prefer a real copy over a symlink to a path outside `plugins/local` — current Cursor builds often reject external symlink targets.
 3. Run **Developer: Reload Window**.
 4. Confirm skills and agents under **Customize**.
@@ -60,11 +60,11 @@ Then install the desired plugin from **Customize → Marketplace**. For local de
 
 | Plugin | Purpose |
 | --- | --- |
-| `open-source-auditor` | Pre-publication open-source audit in one install: auditor persona + six deterministic sensors (secrets, tone, quality, dependency, provenance, hygiene), a triaging PASS/BLOCK guardrail, Apache 2.0 licensing, and post-abort cleanup. Writes only to an explicit, user-specified report folder. See `plugins/open-source-auditor/README.md`. |
-| `repository-savior` | Migrates archived Mercurial/SVN repos to native Git and publishes them to GitHub as **private** only: orchestrating persona + fifteen pipeline skills, private-only gateways, resumable state machine. Requires an explicit migration-root. See `plugins/repository-savior/README.md`. |
+| `open-source-auditor` | Pre-publication open-source audit in one install: auditor persona + six deterministic sensors (secrets, tone, quality, dependency, provenance, hygiene), a triaging PASS/BLOCK guardrail, Apache 2.0 licensing, and post-abort cleanup. Writes only to an explicit, user-specified report folder. See `plugins/cursor/open-source-auditor/README.md`. |
+| `repository-savior` | Migrates archived Mercurial/SVN repos to native Git and publishes them to GitHub as **private** only: orchestrating persona + fifteen pipeline skills, private-only gateways, resumable state machine. Requires an explicit migration-root. See `plugins/cursor/repository-savior/README.md`. |
 | `game-golden-screenshot-verifier` | Engine-independent runtime smoke verifier for games using deterministic input, screenshots, and versioned goldens. |
 | `wpf-visual-quality-gate` | Evaluator-run visual quality gate for WPF desktop UI changes using real input and screenshot evidence. |
-| `orchestrate-localmodel-workflow` | Frontier Boss driving a single local pi worker through an Agentic Rails story queue, unattended and serial, with a three-attempt ladder that ends in a frontier rescue. Experimental rails-dependent exception; see `plugins/orchestrate-localmodel-workflow/README.md`. |
+| `orchestrate-localmodel-workflow` | Frontier Boss driving a single local pi worker through an Agentic Rails story queue, unattended and serial, with a three-attempt ladder that ends in a frontier rescue. Experimental rails-dependent exception; see `plugins/cursor/orchestrate-localmodel-workflow/README.md`. |
 
 ## Skills awaiting packaging (`source/skills/`)
 

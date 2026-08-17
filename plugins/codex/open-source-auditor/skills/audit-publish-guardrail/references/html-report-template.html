@@ -1,0 +1,201 @@
+<!doctype html>
+<!--
+  open-source-auditor — single-file HTML report template.
+
+  GENERATOR CONTRACT (read by the agent producing the report):
+  - Emit the finished file as  <RUN>/audit-report.html  (the ROOT of the dated
+    run folder), so every evidence link below is RELATIVE to the run folder,
+    e.g. href="audit-secrets-sensor/raw/gitleaks.json".
+  - Replace every {{PLACEHOLDER}} and delete every template comment.
+  - One nav link + one <section class="page"> per skill folder that exists in
+    the run (fixed sensor order first, then audit-publish-guardrail last),
+    after the Summary page. Page ids: id="page-<skill-slug>", nav href="#<skill-slug>".
+  - A sensor with zero findings still gets its page: keep the all-clear block.
+  - Keep the file self-contained: no external CSS/JS/fonts/images.
+  - Verdict styling: add class "pass" or "block" to the #verdict hero.
+  - Status chips: use class st-good | st-warning | st-serious | st-critical.
+-->
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Open-Source Audit — {{REPO_NAME}} — {{RUN_TIMESTAMP}}</title>
+<style>
+:root { color-scheme: dark; }
+* { box-sizing: border-box; margin: 0; }
+body { background:#080b10; color:#f4f7fb; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; padding: 0 0 64px; }
+main { max-width: 1100px; margin: 0 auto; padding: 28px 20px 0; }
+#topnav { position: sticky; top: 0; z-index: 40; background: rgba(13,13,13,0.92); backdrop-filter: blur(6px); border-bottom: 1px solid #232c37; }
+#topnav .nav-in { max-width: 1100px; margin: 0 auto; padding: 8px 20px; display: flex; flex-wrap: wrap; gap: 4px; }
+#topnav a { color:#c8d1dc; text-decoration: none; font-size: 13px; padding: 4px 10px; border-radius: 7px; border: 1px solid transparent; white-space: nowrap; }
+#topnav a:hover { background:#11161d; }
+#topnav a.active { background:#11161d; color:#f4f7fb; border-color:rgba(187,210,235,0.13); }
+h1 { font-size: 25px; letter-spacing: -0.02em; }
+h2 { font-size: 17px; margin: 34px 0 6px; letter-spacing: -0.01em; }
+.sub { color:#8290a1; margin: 4px 0 20px; font-size: 13.5px; }
+.muted { color:#8290a1; font-size: 13px; }
+a { color:#69a7ff; }
+.page[hidden] { display: none; }
+
+#verdict { display:flex; align-items:center; gap:16px; border-radius: 12px; padding: 18px 20px; margin: 18px 0 8px; border: 1px solid; }
+#verdict.pass  { background: rgba(85,215,128,0.08); border-color: rgba(85,215,128,0.35); }
+#verdict.block { background: rgba(255,99,114,0.08); border-color: rgba(255,99,114,0.40); }
+.verdict-word { font-size: 30px; font-weight: 750; letter-spacing: -0.02em; }
+#verdict.pass  .verdict-word { color:#55d780; }
+#verdict.block .verdict-word { color:#ff6372; }
+.verdict-why { color:#c8d1dc; font-size: 13.5px; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 16px 0 8px; }
+.tile { background:#11161d; border: 1px solid rgba(187,210,235,0.13); border-radius: 10px; padding: 13px 15px; }
+.tile-value { font-size: 24px; font-weight: 650; letter-spacing: -0.02em; }
+.tile-label { color:#c8d1dc; font-size: 12.5px; margin-top: 2px; }
+.v-critical { color:#ff6372; } .v-serious { color:#ff956d; } .v-warning { color:#f5c65b; } .v-good { color:#55d780; }
+
+.chip { display:inline-block; border-radius: 20px; font-size: 11.5px; font-weight: 650; padding: 2px 10px; vertical-align: middle; }
+.st-good     { background: rgba(85,215,128,0.12); color:#55d780; }
+.st-warning  { background: rgba(245,198,91,0.12); color:#f5c65b; }
+.st-serious  { background: rgba(255,149,109,0.12); color:#ff956d; }
+.st-critical { background: rgba(255,99,114,0.12);  color:#ff6372; }
+.st-skip     { background: rgba(130,144,161,0.15); color:#8290a1; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; margin: 8px 0 4px; }
+th { color:#8290a1; font-weight: 500; text-align: left; padding: 6px 10px; border-bottom: 1px solid #232c37; font-size: 12px; }
+td { padding: 7px 10px; border-bottom: 1px solid #232c37; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+.tablecard { background:#11161d; border: 1px solid rgba(187,210,235,0.13); border-radius: 12px; padding: 6px 10px 8px; overflow-x: auto; margin-bottom: 10px; }
+code, .path { font: 12px/1.5 ui-monospace, "Cascadia Code", Consolas, monospace; color:#c8d1dc; background: rgba(255,255,255,0.04); border-radius: 4px; padding: 1px 5px; word-break: break-all; }
+.snippet { display:block; white-space: pre-wrap; margin-top: 4px; color:#8290a1; }
+
+.allclear { display:flex; align-items:center; gap: 14px; background: rgba(85,215,128,0.06); border: 1px solid rgba(85,215,128,0.25); border-radius: 12px; padding: 18px 20px; margin: 16px 0; }
+.allclear .mark { font-size: 24px; color:#55d780; }
+.allclear b { color:#f4f7fb; }
+
+.next { background:#11161d; border: 1px solid rgba(187,210,235,0.13); border-radius: 12px; padding: 14px 18px; margin: 10px 0; }
+.next ol { margin: 6px 0 2px 20px; }
+.next li { margin: 5px 0; color:#c8d1dc; }
+
+ul.evidence { list-style: none; margin: 8px 0; padding: 0; }
+ul.evidence li { padding: 5px 0; border-bottom: 1px solid #232c37; font-size: 13px; }
+ul.evidence li:last-child { border-bottom: none; }
+
+footer { max-width: 1100px; margin: 40px auto 0; padding: 14px 20px 0; border-top: 1px solid #232c37; color:#8290a1; font-size: 12px; }
+</style></head>
+<body>
+
+<nav id="topnav"><div class="nav-in">
+  <a href="#summary" class="active">Summary</a>
+  <!-- TEMPLATE: one link per skill page, in run order, e.g.
+  <a href="#audit-secrets-sensor">Secrets</a>
+  <a href="#audit-tone-sensor">Tone</a>
+  <a href="#audit-quality-sensor">Quality</a>
+  <a href="#audit-dependency-sensor">Dependency</a>
+  <a href="#audit-provenance-sensor">Provenance</a>
+  <a href="#audit-hygiene-sensor">Hygiene</a>
+  <a href="#audit-publish-guardrail">Guardrail</a> -->
+</div></nav>
+
+<main>
+
+<!-- ======================= SUMMARY PAGE ======================= -->
+<section class="page" id="page-summary">
+  <h1>Open-Source Audit — {{REPO_NAME}}</h1>
+  <p class="sub">Run {{RUN_TIMESTAMP}} · target <code>{{TARGET_REPO_PATH}}</code> · HEAD <code>{{HEAD_SHA}}</code></p>
+
+  <div id="verdict" class="{{pass|block}}">
+    <div class="verdict-word">{{PASS|BLOCK}}</div>
+    <div class="verdict-why">{{One-sentence reason: e.g. "No Critical findings; one High advisory remains." On BLOCK, name the blocking finding ids.}}</div>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="tile-value v-critical">{{N}}</div><div class="tile-label">Critical</div></div>
+    <div class="tile"><div class="tile-value v-serious">{{N}}</div><div class="tile-label">High</div></div>
+    <div class="tile"><div class="tile-value v-warning">{{N}}</div><div class="tile-label">Medium</div></div>
+    <div class="tile"><div class="tile-value">{{N}}</div><div class="tile-label">Low / Info</div></div>
+    <div class="tile"><div class="tile-value v-good">{{N}}/{{M}}</div><div class="tile-label">Sensors ran</div></div>
+  </div>
+
+  <h2>What was done</h2>
+  <p>{{2–5 sentences: the fixed sensor order that ran, tool skips and why, config source, anything notable about the run. This is the orchestrator summary, made durable.}}</p>
+
+  <h2>Findings overview</h2>
+  <div class="tablecard"><table>
+    <thead><tr><th>ID</th><th>Severity</th><th>Category</th><th>Finding</th><th>Sensor</th></tr></thead>
+    <tbody>
+      <!-- TEMPLATE: one row per true-positive finding, most severe first; link Sensor to its page.
+      <tr><td>C1</td><td><span class="chip st-critical">Critical</span></td><td>live-secret</td><td>{{one-line finding}}</td><td><a href="#audit-secrets-sensor">secrets</a></td></tr> -->
+      <!-- TEMPLATE: if there are no findings at all, replace the table with:
+      <tr><td colspan="5" class="muted">No true-positive findings. All sensor noise was triaged and dismissed with cited evidence — see the sensor pages.</td></tr> -->
+    </tbody>
+  </table></div>
+
+  <h2>Next actions</h2>
+  <div class="next"><ol>
+    <!-- TEMPLATE: ordered, concrete, human-gate actions. On PASS with nothing to do:
+    <li>None — the repository is clear to publish.</li> -->
+    <li>{{action}}</li>
+  </ol></div>
+
+  <h2>Run provenance</h2>
+  <p class="muted">Config: <a href="../audit-config/global.json">global.json</a> · <a href="../audit-config/{{REPO_NAME}}.json">{{REPO_NAME}}.json</a> · Verdict source: <a href="audit-publish-guardrail/audit-report.md">audit-report.md</a></p>
+</section>
+
+<!-- ======================= SENSOR PAGE (repeat per skill) ======================= -->
+<!-- TEMPLATE: duplicate this section per skill folder in the run. -->
+<section class="page" id="page-{{skill-slug}}" hidden>
+  <h1>{{Skill display name}} <span class="chip {{st-good|st-warning|st-serious|st-critical|st-skip}}">{{CLEAR|FINDINGS|SKIPPED}}</span></h1>
+  <p class="sub">{{What this sensor checks, one line}} · tools: {{tool vX.Y, tool vX.Y}}</p>
+
+  <h2>How this step went</h2>
+  <p>{{2–4 sentences: what ran, over what scope (files/commits), what was found or not, what was dismissed as noise and why. Cite counts.}}</p>
+
+  <!-- TEMPLATE: if the sensor produced zero true-positive findings, use this block: -->
+  <div class="allclear"><div class="mark">✓</div>
+    <div><b>Nothing found — this check passed.</b><br>
+    <span class="muted">{{e.g. "gitleaks scanned 117 commits across all branches: zero leaks. trufflehog and detect-secrets concur."}}</span></div>
+  </div>
+
+  <!-- TEMPLATE: if the sensor HAS findings, use a table instead of (or after) the all-clear block: -->
+  <div class="tablecard"><table>
+    <thead><tr><th>ID</th><th>Severity</th><th>Where</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>{{H1}}</td><td><span class="chip st-serious">High</span></td>
+          <td><span class="path">{{file:line or commit sha}}</span></td>
+          <td>{{what and why it matters}}<span class="snippet">{{evidence snippet}}</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>Evidence artifacts</h2>
+  <ul class="evidence">
+    <!-- TEMPLATE: one li per file the sensor left behind, linked RELATIVE to the run root:
+    <li><a href="audit-secrets-sensor/raw/gitleaks.json">raw/gitleaks.json</a> <span class="muted">— full gitleaks output, 0 findings</span></li> -->
+    <li><a href="{{skill-slug}}/{{relative/path}}">{{relative/path}}</a> <span class="muted">— {{one-line description}}</span></li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  Generated by the open-source-auditor plugin · run {{RUN_TIMESTAMP}} · every claim traces to a linked raw artifact.
+  Reports from other runs of this repo sit in sibling timestamp folders — open two side by side to compare passes.
+</footer>
+
+<script>
+/* Hash routing: one portable file, client-side pages (#summary, #<skill-slug>). */
+(function () {
+  var pages = document.querySelectorAll(".page");
+  var links = document.querySelectorAll("#topnav a");
+  var first = true;
+  function route() {
+    var hash = (location.hash || "#summary").slice(1);
+    var target = document.getElementById("page-" + hash) ? "page-" + hash : "page-summary";
+    pages.forEach(function (p) { p.hidden = p.id !== target; });
+    links.forEach(function (a) {
+      a.classList.toggle("active", a.getAttribute("href") === "#" + target.slice(5));
+    });
+    if (!first) window.scrollTo(0, 0);
+    first = false;
+  }
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
+</body></html>

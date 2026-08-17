@@ -8,7 +8,7 @@
       "name": "open-source-auditor",
       "source": {
         "source": "local",
-        "path": "./plugins/open-source-auditor"
+        "path": "./plugins/codex/open-source-auditor"
       },
       "category": "auditor"
     },
@@ -16,23 +16,23 @@
       "name": "repository-savior",
       "source": {
         "source": "local",
-        "path": "./plugins/repository-savior"
+        "path": "./plugins/codex/repository-savior"
       },
       "category": "migration"
     },
     {
       "name": "game-golden-screenshot-verifier",
-      "source": { "source": "local", "path": "./plugins/game-golden-screenshot-verifier" },
+      "source": { "source": "local", "path": "./plugins/codex/game-golden-screenshot-verifier" },
       "category": "verifier"
     },
     {
       "name": "wpf-visual-quality-gate",
-      "source": { "source": "local", "path": "./plugins/wpf-visual-quality-gate" },
+      "source": { "source": "local", "path": "./plugins/codex/wpf-visual-quality-gate" },
       "category": "verifier"
     },
     {
       "name": "orchestrate-localmodel-workflow",
-      "source": { "source": "local", "path": "./plugins/orchestrate-localmodel-workflow" },
+      "source": { "source": "local", "path": "./plugins/codex/orchestrate-localmodel-workflow" },
       "category": "workflow"
     }
   ]
