@@ -64,6 +64,7 @@ Then install the desired plugin from **Customize → Marketplace**. For local de
 | `repository-savior` | Migrates archived Mercurial/SVN repos to native Git and publishes them to GitHub as **private** only: orchestrating persona + fifteen pipeline skills, private-only gateways, resumable state machine. Requires an explicit migration-root. See `plugins/repository-savior/README.md`. |
 | `game-golden-screenshot-verifier` | Engine-independent runtime smoke verifier for games using deterministic input, screenshots, and versioned goldens. |
 | `wpf-visual-quality-gate` | Evaluator-run visual quality gate for WPF desktop UI changes using real input and screenshot evidence. |
+| `orchestrate-localmodel-workflow` | Frontier Boss driving a single local pi worker through an Agentic Rails story queue, unattended and serial, with a three-attempt ladder that ends in a frontier rescue. Experimental rails-dependent exception; see `plugins/orchestrate-localmodel-workflow/README.md`. |
 
 ## Skills awaiting packaging (`source/skills/`)
 

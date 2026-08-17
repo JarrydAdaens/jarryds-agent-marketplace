@@ -29,6 +29,11 @@
       "name": "wpf-visual-quality-gate",
       "source": { "source": "local", "path": "./plugins/wpf-visual-quality-gate" },
       "category": "verifier"
+    },
+    {
+      "name": "orchestrate-localmodel-workflow",
+      "source": { "source": "local", "path": "./plugins/orchestrate-localmodel-workflow" },
+      "category": "workflow"
     }
   ]
 }

@@ -35,6 +35,13 @@
       "description": "Evaluator-run visual quality gate for WPF apps using real input and screenshot evidence.",
       "category": "verifier",
       "keywords": ["wpf", "ui", "screenshot", "quality-gate"]
+    },
+    {
+      "name": "orchestrate-localmodel-workflow",
+      "source": "./plugins/orchestrate-localmodel-workflow",
+      "description": "Frontier Boss supervising a single local pi worker: serial unattended story queue, RPC session supervision, and a three-attempt ladder that ends in a frontier rescue.",
+      "category": "workflow",
+      "keywords": ["orchestration", "local-model", "pi", "unattended", "boss"]
     }
   ]
 }
