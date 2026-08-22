@@ -1,6 +1,6 @@
 {
   "name": "wpf-visual-quality-gate",
-  "description": "Evaluator-run WPF visual quality gate using real input and screenshot evidence.",
+  "description": "v1.1.0 — Evaluator-run WPF visual quality gate using real input and screenshot evidence.",
   "author": { "name": "Jarryd Adaens" },
   "keywords": ["wpf", "ui", "screenshot", "quality-gate"]
 }
