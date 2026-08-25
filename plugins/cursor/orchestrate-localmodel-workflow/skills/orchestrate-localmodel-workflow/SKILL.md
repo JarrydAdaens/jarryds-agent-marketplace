@@ -128,6 +128,10 @@ Supporting references:
 - **Dispatch payload**: [references/worker-contract.md](references/worker-contract.md)
 - **Escalation and incident report**: [references/escalation-ladder.md](references/escalation-ladder.md)
 
+## Project worker configuration
+
+Before dispatch, load `harness/orchestrate-localmodel-workflow/cursor-config.json` from the target repository. It is JSONC and is created by `/localmodel-init`. The configuration supplies the worker `model`, `idle_timeout_seconds`, `think_grace_timeout_seconds`, and optional `probe_url`. Do not dispatch without a valid configuration: ask the user to run `/localmodel-init` instead. The selected model is for the local Pi worker only; never change the Boss model.
+
 ## Non-negotiable rules
 
 This is the canonical rule list. Nothing else in this document restates it.
@@ -142,7 +146,7 @@ This is the canonical rule list. Nothing else in this document restates it.
 
 **Worker**
 
-- The worker is the local pi session. Do not select a different local agent. Do not select the worker's model.
+- The worker is the local pi session. Do not select a different local agent. Start it with the model configured in `harness/orchestrate-localmodel-workflow/cursor-config.json`; do not substitute a model or change the Boss model.
 - CER scores are not a dispatch gate. Attempt any story that plausibly fits the 131k context window. The only pre-dispatch size check: if the story's plan plus its named files obviously exceed that window, flag the row `BLOCKED` (too large) and continue the queue.
 - Exactly one pi process. List sessions before every spawn. Never kill the user's own session.
 - RPC only for story dispatch (`--transport rpc`, the default). Never `pi -p`. Never `--transport json` for a worker contract (Windows argv cap; Q7 unverified). Spawn through the bundled client, which spawns `cli.js` through node directly.
@@ -191,6 +195,7 @@ Write or refresh `context/_localmodel-runs/<run-slug>/briefing.md` with:
 - the ordered list of stories or plan slices, with source paths;
 - the scope-fence policy (writable vs forbidden defaults);
 - the pi client path actually resolved;
+- the selected worker model and liveness timeouts from the project configuration;
 - any run-slug collision, `--dry-run`, `--clean`, and whether this resume follows a rescue;
 - the rails-dependent-exception note, one line.
 
@@ -241,6 +246,10 @@ Column rules:
     node <plugin-root>/scripts/pi-rpc-client.mjs
       --cwd <target-repo>
       --transport rpc
+      --model <configured-model>
+      --idle-ms <idle_timeout_seconds * 1000>
+      --think-grace-ms <think_grace_timeout_seconds * 1000>
+      [--probe-url <configured-probe-url>]
       --prompt-file <that dispatch file>
       --events-file context/_localmodel-runs/<run-slug>/logs/events-<story>-attempt-<n>.jsonl
       --session-dir context/_localmodel-runs/<run-slug>/logs/pi-session-<story>-attempt-<n>

@@ -58,7 +58,7 @@ function usage() {
   return `Usage:
   node pi-rpc-client.mjs --prompt <text> | --prompt-file <path>
        [--cwd <dir>] [--idle-ms ${DEFAULT_IDLE_MS}] [--think-grace-ms ${DEFAULT_THINK_GRACE_MS}]
-       [--hard-cap-ms ${DEFAULT_HARD_CAP_MS}] [--events-file <path>] [--session-dir <path>]
+       [--hard-cap-ms ${DEFAULT_HARD_CAP_MS}] [--model <model-slug>] [--events-file <path>] [--session-dir <path>]
        [--name <session-name>] [--transport rpc|json] [--allow-existing] [--probe-url <url>]
   node pi-rpc-client.mjs --list-sessions
   node pi-rpc-client.mjs --self-check
@@ -73,6 +73,7 @@ function parseArgs(argv) {
     idleMs: DEFAULT_IDLE_MS,
     thinkGraceMs: DEFAULT_THINK_GRACE_MS,
     hardCapMs: DEFAULT_HARD_CAP_MS,
+    model: null,
     eventsFile: null,
     sessionDir: null,
     name: null,
@@ -109,6 +110,9 @@ function parseArgs(argv) {
         break;
       case "--hard-cap-ms":
         out.hardCapMs = Number(next());
+        break;
+      case "--model":
+        out.model = next();
         break;
       case "--events-file":
         out.eventsFile = resolve(next());
@@ -509,6 +513,9 @@ async function runSession(args, launch, prompt) {
   }
 
   const cliArgs = args.transport === "json" ? ["--mode", "json", "-a"] : ["--mode", "rpc", "-a"];
+  if (args.model) {
+    cliArgs.push("--model", args.model);
+  }
   if (args.sessionDir) {
     cliArgs.push("--session-dir", args.sessionDir);
   } else {
