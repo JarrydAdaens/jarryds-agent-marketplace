@@ -18,7 +18,30 @@ It reads `context/implementation-plans/<milestone>/<story>/plan.md`, writes run 
 
 **Cursor:** copy this plugin folder to `%USERPROFILE%\.cursor\plugins\local\orchestrate-localmodel-workflow\` (must contain `.cursor-plugin/plugin.json` at that root), then **Developer: Reload Window**. See the marketplace root `README.md`.
 
-One install brings the orchestration skill, the three references, and `scripts/pi-rpc-client.mjs`.
+One install brings the orchestration skill, five project-control skills, the three references, and the Pi RPC client.
+
+## Project configuration and controls
+
+Each consuming project opts in with `harness/orchestrate-localmodel-workflow/cursor-config.json`:
+
+```text
+/localmodel-init
+```
+
+That JSONC config defaults the local Pi worker to `qwen3.8`, with a 180-second idle liveness check and a 900-second think-grace timeout. It is deliberately project-scoped; it does not change the plugin cache or global Pi configuration.
+
+```text
+/localmodel-help
+/localmodel-model                 # view choices
+/localmodel-model 1               # qwen3.8
+/localmodel-model 2               # local-model-placeholder
+/localmodel-model <pi-model-slug> # another valid Pi model slug
+/localmodel-health
+/localmodel-timeout idle 240
+/localmodel-timeout think default
+```
+
+The selected model and timeouts are passed to each new Pi worker. Health is non-mutating and does not start a worker.
 
 ## Invoke
 
