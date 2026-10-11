@@ -2,7 +2,7 @@
 """Preflight for the open-source audit sensors.
 
 Resolves which audit tools are actually available on this machine, records the
-resolved version against the pin in global.json, and emits a skip record for
+resolved version without asserting pin compatibility, and emits a skip record for
 every tool that is missing. A sensor NEVER fails because a tool is absent; it
 records the skip and moves on. That skip record is itself audit evidence.
 
@@ -33,10 +33,10 @@ NATIVE_TOOLS = {
     "scancode": ["scancode", "--version"],
 }
 UVX_TOOLS = {
-    "detect-secrets": ["uvx", "detect-secrets", "--version"],
-    "codespell": ["uvx", "codespell", "--version"],
-    "ruff": ["uvx", "ruff", "--version"],
-    "git-filter-repo": ["uvx", "git-filter-repo", "--version"],
+    "detect-secrets": ["uvx", "--offline", "detect-secrets", "--version"],
+    "codespell": ["uvx", "--offline", "codespell", "--version"],
+    "ruff": ["uvx", "--offline", "ruff", "--version"],
+    "git-filter-repo": ["uvx", "--offline", "git-filter-repo", "--version"],
 }
 NODE_TOOLS = {
     "eslint": ["npx", "--no-install", "eslint", "--version"],
@@ -75,7 +75,7 @@ def _probe(name: str, cmd: list[str], needs_launcher: str | None) -> ToolStatus:
     resolved = shutil.which(launcher)
     run_cmd = [resolved, *cmd[1:]] if resolved else cmd
     try:
-        out = subprocess.run(run_cmd, capture_output=True, text=True, timeout=90)
+        out = subprocess.run(run_cmd, capture_output=True, text=True, timeout=15)
         version = (out.stdout or out.stderr).strip().splitlines()
         return ToolStatus(name, out.returncode == 0,
                           version[0].strip() if version else "unknown", cmd)
@@ -111,9 +111,9 @@ def main() -> None:
     print(json.dumps(report, indent=2))
     missing = [n for n, s in statuses.items() if not s.available]
     if missing:
-        print(f"\nMISSING ({len(missing)}): {', '.join(missing)}")
+        print(f"MISSING ({len(missing)}): {', '.join(missing)}", file=__import__('sys').stderr)
     else:
-        print("\nAll probed tools available.")
+        print("All probed tools available.", file=__import__('sys').stderr)
 
 
 if __name__ == "__main__":

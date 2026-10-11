@@ -59,6 +59,11 @@ def load_config(path: Path) -> EvalConfig:
 
     if "executable" not in raw or not str(raw["executable"]).strip():
         raise ValueError("config is missing required 'executable' path")
+    golden_name = raw.get('golden_name', 'golden.png')
+    if (not isinstance(golden_name, str) or not golden_name
+            or Path(golden_name).name != golden_name or '/' in golden_name
+            or '\\' in golden_name or golden_name in ('.', '..')):
+        raise ValueError('golden_name must be one filename inside goldens/')
 
     capture_raw = raw.get("capture", {}) or {}
     capture = CaptureConfig(

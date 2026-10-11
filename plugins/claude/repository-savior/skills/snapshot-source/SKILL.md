@@ -1,13 +1,6 @@
 ---
 name: snapshot-source
-description: >-
-  Use when creating the read-only working copy and recorded fingerprint of
-  a legacy repository before conversion. Copies the source into the
-  repository workspace and records per-file SHA-256 hashes via the
-  source-read-only gateway so accidental modification of the original
-  archive is detectable and provable. Writes only into the user-specified
-  migration root and refuses to run without one. Triggers: "snapshot the
-  source", "fingerprint the archive before converting".
+description: Use when an authorized legacy repository migration reaches the snapshot source stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -69,3 +62,10 @@ point → `FAILED`, stop, escalate.
 
 The matching conversion skill (`convert-mercurial-to-git` or
 `convert-svn-to-git`) operates on `WS/source-copy/` only.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

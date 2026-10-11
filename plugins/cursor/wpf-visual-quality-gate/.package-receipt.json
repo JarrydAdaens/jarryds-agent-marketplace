@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "family": "wpf-visual-quality-gate",
+  "host": "cursor",
+  "payload_sha256": "ade3fd447bb01ad2819ecfc0f3304453af6b70196a687a44b672c1886539711f",
+  "source": "source/plugins/wpf-visual-quality-gate",
+  "source_revision": "92154517cbca4c1656e922bfa3c46e510297f47d",
+  "source_state": "worktree",
+  "component_version": "92154517cbca4c1656e922bfa3c46e510297f47d",
+  "activation": "not_tested",
+  "host_version": null,
+  "note": "Generation proves payload parity, not installed host activation."
+}

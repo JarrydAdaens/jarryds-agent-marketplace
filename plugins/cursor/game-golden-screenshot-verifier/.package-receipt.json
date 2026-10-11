@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "family": "game-golden-screenshot-verifier",
+  "host": "cursor",
+  "payload_sha256": "bb3968e4e6f99d2361355dd740ad5743e9aa1ce9fa0a06fd3a29bd4caf224876",
+  "source": "source/plugins/game-golden-screenshot-verifier",
+  "source_revision": "92154517cbca4c1656e922bfa3c46e510297f47d",
+  "source_state": "worktree",
+  "component_version": "92154517cbca4c1656e922bfa3c46e510297f47d",
+  "activation": "not_tested",
+  "host_version": null,
+  "note": "Generation proves payload parity, not installed host activation."
+}

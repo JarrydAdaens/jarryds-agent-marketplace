@@ -1,14 +1,6 @@
 ---
 name: audit-hygiene-sensor
-description: >-
-  First-impression hygiene scanner for the open-source pre-publication audit. Use
-  when auditing a target repo for dead links, typos, README-vs-reality mismatches,
-  unexplained branches, and repo-completeness (LICENSE / README / NOTICE).
-  Read-only on the target repo: writes only into the user-specified report
-  folder, and refuses to run without one. Knows that documented experiment
-  branches are ASSETS to point at, not clutter to delete. Triggers: "audit
-  hygiene", "check for dead links", "does the README match the repo", "audit
-  the branches before publish".
+description: Use when asked to run the hygiene sensor in an explicitly requested publication audit. Requires an explicit target repository and report folder.
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.2"
@@ -81,3 +73,17 @@ SKILL.md).
 `raw/lychee.json`, `raw/codespell.json`, `raw/readme-check.json`,
 `raw/branch-inventory.json`, then normalize
 (`uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"`).
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.
+
+## Evidence envelope
+
+After preserving raw tool output and successful normalization, write
+`sensor-result.json` with the packaged `audit-lib/sensor-result.py`. Record the
+required tool statuses, raw and normalized artifact hashes, and coverage status.
+Missing tools or malformed results remain incomplete, never a clean result.

@@ -1,14 +1,6 @@
 ---
 name: create-private-github-repository
-description: >-
-  Use when creating the empty PRIVATE GitHub repository for an
-  audit-passed migration — exclusively through the github-private-only
-  gateway, which always supplies --private, rejects any visibility token,
-  stops on name collision, and verifies the created repo is private. There
-  is no public or internal option anywhere in this plugin. Writes only into
-  the user-specified migration root and refuses to run without one.
-  Triggers: "create the GitHub repo", "publish the migrated repo" (private
-  only).
+description: Use when an authorized legacy repository migration reaches the create private github repository stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -68,3 +60,10 @@ Gateway exit 0 → transition to `REMOTE_CREATED`.
 
 `verify-remote-privacy` performs the independent check next — the gateway's
 own verification does not replace it.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

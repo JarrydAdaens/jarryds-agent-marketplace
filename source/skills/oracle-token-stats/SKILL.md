@@ -11,7 +11,7 @@ description: >
   whenever durable token/cost accounting is wanted across IDEs.
 disable-model-invocation: true
 metadata:
-  version: "1.3"
+  version: "2.0"
 ---
 
 # Oracle Token Stats
@@ -26,18 +26,29 @@ records in its session logs/telemetry, normalizes them into a receipt, and keeps
 durable JSONL ledger. Costs are **estimates** derived from a bundled pricing table —
 never billing truth, and clearly labeled.
 
-**Core rule:** token totals come from logs. There are no caveman/heuristic assumptions;
-if caveman mode is active it is recorded as an optional `caveman:on` tag only.
+**Core rule:** token totals come from retained logs. Existing historical receipt
+metadata stays readable, while new scans record no style-mode tags.
 
-- **Claude adapter** (implemented): reads `$CLAUDE_CONFIG_DIR/projects/**.jsonl`
-  (default `~/.claude/projects`), summing each assistant entry's `message.usage`:
+- **Claude adapter** (forensic parser): recursively reads `$CLAUDE_CONFIG_DIR/projects/**/*.jsonl`
+  (default `~/.claude/projects`), deduplicating `message.usage` by request/message ID:
   `input_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`, `output_tokens`.
+  Repeated/evolving records use category maxima. Reasoning is a subset of output.
+  Nested agent transcripts carry distinct identities and directory-derived parentage.
+  Price each response using its own model; model filters select matching responses.
+  This private transcript format is forensic evidence with partial retained coverage,
+  not a supported telemetry or billing contract. Missing/ambiguous values are labeled.
 - **Codex adapter** (research stub): intentionally not implemented against a private
   transcript format yet. See [`references/codex-research.md`](./references/codex-research.md).
 
 Storage default: `%LOCALAPPDATA%\token-stats\ledger.jsonl` (Windows) or
 `~/.local/share/token-stats/ledger.jsonl` (POSIX). Only metadata and counters are
 stored — never prompt text. Override the location with `TOKEN_STATS_DIR`.
+
+New receipts use schema version 2 and parser `claude-jsonl/2`, with response IDs,
+source hashes, model/category attribution, and coverage diagnostics. Legacy receipts
+remain in the ledger; current reports select the highest schema version per session.
+`readLedger(file, { includeHistorical: true })` exposes historical snapshots explicitly.
+Day and time-window reports use session snapshot timestamps, not exact turn boundaries.
 
 ## Trigger
 
@@ -129,10 +140,11 @@ dollars only apply under per-token (API/flexible) pricing.
 
 ## Tests
 
-`node --test scripts/test/*.test.js` — covers full input/cache/output accounting,
+Run `npm test` from `scripts/`. Tests cover full input/cache/output accounting,
 malformed JSONL, multi-model sessions, empty sessions, duplicate-snapshot dedup, known
 vs unknown model pricing, prefix matching, `--since`/grouping, the pricing-table
-version stamp, and the server client (URL config, health probe, timeout abort, window
+version stamp, repeated/evolving response IDs, nested agents, copied responses,
+historical receipt preservation, telemetry gaps, and the server client (URL config, health probe, timeout abort, window
 fetches — all against stubbed HTTP, no live server required).
 
 ## See also

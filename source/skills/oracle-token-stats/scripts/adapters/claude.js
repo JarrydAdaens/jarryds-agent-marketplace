@@ -1,169 +1,156 @@
-// Claude Code adapter.
-//
-// Reads Claude Code's local JSONL session logs (one file per session under
-// $CLAUDE_CONFIG_DIR/projects, defaulting to ~/.claude/projects) and produces
-// normalized token receipts. Token counts come straight from each assistant
-// entry's `message.usage` — nothing is estimated.
-//
-// Full accounting: input_tokens (fresh/uncached), cache_creation_input_tokens,
-// cache_read_input_tokens (→ cached_input_tokens), and output_tokens.
-
+// Forensic accounting of retained Claude Code JSONL transcripts. This private
+// format is not a billing or supported telemetry contract; coverage is explicit.
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
-import { join, basename } from 'node:path';
+import { join, basename, dirname, relative } from 'node:path';
+import { createHash } from 'node:crypto';
 import { claudeProjectsDir } from '../lib/paths.js';
-import { priceReceipt } from '../lib/pricing.js';
+import { withResponses } from '../lib/receipts.js';
 
 export const name = 'claude';
+export const PARSER_VERSION = 'claude-jsonl/2';
+const CATEGORIES = {
+  input_tokens: 'input_tokens', cache_creation_input_tokens: 'cache_creation_input_tokens',
+  cache_read_input_tokens: 'cached_input_tokens', output_tokens: 'output_tokens',
+  reasoning_output_tokens: 'reasoning_output_tokens',
+};
 
-// Find every *.jsonl session log under the projects root (one level of project dirs).
 function findSessionFiles(root) {
-  if (!existsSync(root)) {
-    return [];
-  }
+  if (!existsSync(root)) return [];
   const files = [];
-  for (const projectEntry of readdirSync(root, { withFileTypes: true })) {
-    if (!projectEntry.isDirectory()) {
-      continue;
-    }
-    const projectDir = join(root, projectEntry.name);
-    for (const fileEntry of readdirSync(projectDir, { withFileTypes: true })) {
-      if (fileEntry.isFile() && fileEntry.name.endsWith('.jsonl')) {
-        files.push(join(projectDir, fileEntry.name));
-      }
+  function visit(dir) {
+    for (const entry of readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+      if (entry.isDirectory()) visit(join(dir, entry.name)); // no symlink traversal
+      else if (entry.isFile() && entry.name.endsWith('.jsonl')) files.push(join(dir, entry.name));
     }
   }
+  visit(root);
   return files;
 }
 
-// Parse a single session log into a normalized, priced receipt (or null if the
-// file holds no assistant usage). `malformed` counts unparseable lines.
-function parseSessionFile(file) {
-  const usage = {
-    input: 0,
-    cacheCreation: 0,
-    cacheRead: 0,
-    output: 0,
-    reasoning: 0,
-  };
-  let turns = 0;
-  let malformed = 0;
-  let model = '';
-  let sessionId = '';
-  let projectPath = '';
-  let firstTs = null;
-  let lastTs = null;
-
+// Exposed for read-only reconciliation of a specific local evidence file.
+export function parseSessionFile(file) {
   const raw = readFileSync(file, 'utf8');
-  for (const line of raw.split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed) {
-      continue;
-    }
-    let entry;
+  const digest = createHash('sha256').update(raw).digest('hex');
+  const entries = [];
+  let malformed = 0;
+  raw.split('\n').forEach((line, index) => {
+    if (!line.trim()) return;
     try {
-      entry = JSON.parse(trimmed);
-    } catch {
-      malformed += 1;
+      const entry = JSON.parse(line);
+      if (!entry || typeof entry !== 'object' || Array.isArray(entry)) malformed += 1;
+      else entries.push({ entry, line: index + 1 });
+    } catch { malformed += 1; }
+  });
+  const nested = basename(dirname(file)) === 'subagents';
+  let sessionId = nested ? basename(file, '.jsonl') : '';
+  let projectPath = '';
+  const timestamps = [];
+  const responses = new Map();
+  const issues = new Set(malformed ? ['malformed-records'] : []);
+  let assistantRows = 0;
+  let missingTelemetry = 0;
+  const requests = new Map();
+  for (const { entry } of entries) {
+    if (entry.type !== 'assistant' || !entry.message?.id || !entry.requestId) continue;
+    if (!requests.has(entry.message.id)) requests.set(entry.message.id, new Set());
+    requests.get(entry.message.id).add(entry.requestId);
+  }
+  for (const { entry, line } of entries) {
+    if (!sessionId && typeof entry.sessionId === 'string') sessionId = entry.sessionId;
+    if (typeof entry.cwd === 'string') projectPath = entry.cwd;
+    const timestamp = Date.parse(entry.timestamp || '');
+    if (Number.isFinite(timestamp)) timestamps.push(timestamp);
+    if (entry.type !== 'assistant') continue;
+    assistantRows += 1;
+    const message = entry.message;
+    const usage = message?.usage;
+    if (!usage || typeof usage !== 'object' || Array.isArray(usage)) {
+      missingTelemetry += 1;
+      issues.add('missing-usage');
       continue;
     }
-
-    if (entry.sessionId && !sessionId) {
-      sessionId = entry.sessionId;
-    }
-    if (entry.cwd) {
-      projectPath = entry.cwd; // last writer wins — reflects the session's working dir
-    }
-    if (entry.timestamp) {
-      const ts = Date.parse(entry.timestamp);
-      if (!Number.isNaN(ts)) {
-        if (firstTs === null || ts < firstTs) {
-          firstTs = ts;
-        }
-        if (lastTs === null || ts > lastTs) {
-          lastTs = ts;
-        }
-      }
-    }
-
-    const u = entry.type === 'assistant' && entry.message && entry.message.usage;
-    if (u) {
-      turns += 1;
-      if (entry.message.model) {
-        model = entry.message.model;
-      }
-      usage.input += u.input_tokens || 0;
-      usage.cacheCreation += u.cache_creation_input_tokens || 0;
-      usage.cacheRead += u.cache_read_input_tokens || 0;
-      usage.output += u.output_tokens || 0;
-      // Claude folds reasoning into output today; surface the field if present.
-      usage.reasoning += u.reasoning_output_tokens || 0;
+    const messageId = typeof message.id === 'string' && message.id ? message.id : null;
+    let requestId = typeof entry.requestId === 'string' ? entry.requestId : null;
+    const knownRequests = requests.get(messageId);
+    if (!requestId && knownRequests?.size === 1) requestId = [...knownRequests][0];
+    if (!requestId && knownRequests?.size > 1) issues.add('ambiguous-request-identity');
+    // Anonymous rows stay distinct even when their counters match.
+    const responseId = messageId ? JSON.stringify([requestId, messageId]) :
+      JSON.stringify(['anonymous', file, line]);
+    if (!messageId) issues.add('missing-response-identity');
+    const model = typeof message.model === 'string' ? message.model : '';
+    if (!model) issues.add('missing-model');
+    let response = responses.get(responseId);
+    if (!response) {
+      response = { response_id: responseId, message_id: messageId, request_id: requestId,
+        model, source_lines: [], updated_at: Number.isFinite(timestamp) ? new Date(timestamp).toISOString() : null,
+        reasoning_included_in_output: true };
+      for (const target of Object.values(CATEGORIES)) response[target] = null;
+      responses.set(responseId, response);
+    } else if (model && response.model && model !== response.model) {
+      response.model = 'unknown';
+      issues.add('conflicting-response-model');
+    } else if (!response.model) response.model = model;
+    response.source_lines.push(line);
+    if (Number.isFinite(timestamp) && (!response.updated_at || timestamp > Date.parse(response.updated_at)))
+      response.updated_at = new Date(timestamp).toISOString();
+    for (const [source, target] of Object.entries(CATEGORIES)) {
+      const value = usage[source];
+      if (value === undefined || value === null) continue;
+      if (!Number.isSafeInteger(value) || value < 0) { issues.add('invalid-token-counter'); continue; }
+      if (response[target] !== null && value < response[target]) issues.add('decreasing-usage-revision');
+      response[target] = Math.max(response[target] ?? 0, value);
     }
   }
-
-  if (turns === 0) {
-    return { receipt: null, malformed };
+  if (!responses.size) return { receipt: null, malformed, missingTelemetry };
+  const values = [...responses.values()];
+  for (const response of values) {
+    response.missing_categories = Object.values(CATEGORIES).filter((field) => response[field] === null);
+    if (response.missing_categories.some((field) => field !== 'reasoning_output_tokens')) issues.add('missing-token-categories');
+    if (response.reasoning_output_tokens > response.output_tokens && response.output_tokens !== null)
+      issues.add('reasoning-exceeds-output');
   }
-
-  const stat = statSync(file);
-  const mtimeIso = stat.mtime.toISOString();
-  const startedAt = firstTs !== null ? new Date(firstTs).toISOString() : mtimeIso;
-  const updatedAt = lastTs !== null ? new Date(lastTs).toISOString() : mtimeIso;
-
-  const receipt = {
-    provider: 'claude',
+  const fallback = statSync(file).mtime.toISOString();
+  if (!timestamps.length) issues.add('missing-timestamps');
+  const receipt = withResponses({
+    schema_version: 2, parser_version: PARSER_VERSION, provider: 'claude',
     session_id: sessionId || basename(file, '.jsonl'),
+    parent_session_id: nested ? basename(dirname(dirname(file))) : null,
+    parentage_source: nested ? 'transcript-directory' : null,
     project_path: projectPath,
-    started_at: startedAt,
-    updated_at: updatedAt,
-    model,
-    turns,
-    input_tokens: usage.input,
-    cache_creation_input_tokens: usage.cacheCreation,
-    cached_input_tokens: usage.cacheRead,
-    output_tokens: usage.output,
-    reasoning_output_tokens: usage.reasoning,
-    total_tokens: usage.input + usage.cacheCreation + usage.cacheRead + usage.output,
+    started_at: timestamps.length ? new Date(Math.min(...timestamps)).toISOString() : fallback,
+    updated_at: timestamps.length ? new Date(Math.max(...timestamps)).toISOString() : fallback,
     source_file: file,
-    tags: cavemanTags(projectPath),
-  };
-
-  priceReceipt(receipt);
-  return { receipt, malformed };
+    provenance: { kind: 'forensic-local-transcript', source_sha256: digest,
+      deduplication: 'request-and-message-id/category-maxima' },
+    coverage: { status: 'partial-retained-corpus', issues: [...issues].sort(),
+      assistant_rows: assistantRows, malformed_records: malformed, missing_telemetry_records: missingTelemetry,
+      duplicate_usage_rows: values.reduce((sum, r) => sum + r.source_lines.length - 1, 0),
+      reasoning_telemetry: values.every((r) => r.reasoning_output_tokens !== null) ? 'available' : 'missing-or-partial' },
+  }, values);
+  return { receipt, malformed, missingTelemetry };
 }
 
-// Optional caveman metadata: presence of a `.caveman-active` marker in the
-// project directory is recorded as a tag only. It never affects token totals.
-function cavemanTags(projectPath) {
-  if (projectPath && existsSync(join(projectPath, '.caveman-active'))) {
-    return ['caveman:on'];
-  }
-  return [];
-}
-
-// Scan every Claude session log. Returns { receipts, malformed, scanned, root }.
 export function scan({ root = claudeProjectsDir() } = {}) {
   const files = findSessionFiles(root);
-  const receipts = [];
-  let malformed = 0;
-  for (const file of files) {
-    const result = parseSessionFile(file);
-    malformed += result.malformed;
-    if (result.receipt) {
-      receipts.push(result.receipt);
-    }
+  const results = files.map(parseSessionFile);
+  const receipts = results.map((r) => r.receipt).filter(Boolean);
+  const byRelativeFile = new Map(receipts.map((r) => [relative(root, r.source_file), r]));
+  for (const receipt of receipts) {
+    if (!receipt.parent_session_id) continue;
+    const parentFile = relative(root, join(dirname(dirname(receipt.source_file)), '..', `${receipt.parent_session_id}.jsonl`));
+    const parent = byRelativeFile.get(parentFile);
+    if (parent) receipt.parent_session_id = parent.session_id;
+    else receipt.coverage.issues.push('parent-transcript-unavailable');
   }
-  return { receipts, malformed, scanned: files.length, root };
+  return { receipts, malformed: results.reduce((n, r) => n + r.malformed, 0),
+    missingTelemetry: results.reduce((n, r) => n + r.missingTelemetry, 0), scanned: files.length, root,
+    coverage: 'partial-retained-corpus', collection: 'forensic-local-transcript' };
 }
 
-// The "current" session = the most recently modified log, optionally filtered by
-// a project-path substring. Returns a receipt or null.
 export function current({ root = claudeProjectsDir(), project } = {}) {
   const { receipts } = scan({ root });
-  const candidates = project
-    ? receipts.filter((r) => (r.project_path || '').toLowerCase().includes(String(project).toLowerCase()))
-    : receipts;
-  if (!candidates.length) {
-    return null;
-  }
-  return candidates.sort((a, b) => (a.updated_at < b.updated_at ? 1 : -1))[0];
+  const candidates = receipts.filter((r) => !r.parent_session_id && (!project ||
+    (r.project_path || '').toLowerCase().includes(String(project).toLowerCase())));
+  return candidates.sort((a, b) => a.updated_at < b.updated_at ? 1 : -1)[0] || null;
 }

@@ -109,3 +109,16 @@ verified state and never blindly repeats remote or destructive operations.
   the effective policy but never modifies it.
 - The plugin never deletes or cleans up the original archive — that remains
   a separate human decision after acceptance.
+
+## Packaging and activation evidence
+
+This payload is generated from one repository-owned authoring source. All runtime
+helpers and references are inside this package. The `.package-receipt.json` records
+the baseline and content digest; discovery and activation require a separate live
+host test. Invoke only for an explicit request or an adopted project workflow.
+
+The source fingerprint gateway refuses a manifest destination inside the archive
+and refuses to overwrite an existing fingerprint. Use a new explicit output path
+for a new baseline; keep prior evidence available for verification. Snapshot,
+audit, independent remote privacy, exact ref selection, and fresh-clone gates
+remain mandatory stages of an authorized migration.

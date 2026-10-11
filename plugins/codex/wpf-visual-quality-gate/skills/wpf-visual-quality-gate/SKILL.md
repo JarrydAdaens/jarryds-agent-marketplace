@@ -1,13 +1,6 @@
 ---
 name: wpf-visual-quality-gate
-description: >-
-  Use this skill for any WPF change that affects visible UI, navigation,
-  state presentation, layout, or user interaction — before declaring the work
-  done. It dispatches an independent evaluator that launches the app,
-  screenshots the initial state, performs the target interaction through real
-  input, screenshots the result, and reports pass/fail against explicit
-  criteria. Also use it to adopt the gate in a WPF project or to write an
-  evaluator packet.
+description: Use when asked for live WPF visual evaluation or when the project explicitly adopts this gate for the current UI change.
 metadata:
   version: "1.1"
 ---
@@ -32,7 +25,7 @@ project.
    containing the filled Project Defaults table from the gate document:
    visual launch command, window title, cleanup command. This file is the
    entire per-project seam.
-2. Wire the trigger into the project's `AGENTS.md` (or `CLAUDE.md`) so the
+2. Only when the user requests mandatory adoption, wire the trigger into the project's `AGENTS.md` (or `CLAUDE.md`) so the
    gate is mandatory rather than advisory:
 
    > - For any change affecting visible WPF UI, run the
@@ -60,3 +53,14 @@ project.
   evaluator steps.
 - The gate degrades to a human checklist when no evaluator sub-agent is
   available.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.
+
+An evaluator may inspect approved references but must not replace them. Reference
+updates need explicit user approval, a reviewed candidate, and a retained prior image.
+Documentation and backend edits do not activate this gate absent a requested UI evaluation.

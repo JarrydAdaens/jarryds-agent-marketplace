@@ -1,17 +1,6 @@
 ---
 name: audit-publish-guardrail
-description: >-
-  The enforcing + reasoning half of the open-source pre-publication audit. Use
-  after the sensors have run to triage raw/normalized findings into true positives
-  vs. noise, assign severity from config policy (not vibes), and emit
-  audit-report.md ending in a machine-readable PASS/BLOCK verdict, plus a
-  self-contained audit-report.html at the run-folder root that ties every
-  sensor's evidence together in one navigable page. Finds nothing itself — it
-  judges what the sensors found. BLOCK on any unresolved Critical is
-  non-overridable except by a recorded human waiver. Requires the user-specified
-  report folder; refuses to run without one. Triggers: "triage the audit
-  findings", "write the audit report", "is this repo safe to publish", "give me
-  the publish verdict".
+description: Use when asked to triage completed audit evidence and write a publish verdict. Requires an explicit target repository and report folder.
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.3"
@@ -128,3 +117,23 @@ Requirements:
   survives being moved, zipped, or emailed. Sibling timestamp folders each
   carry their own `audit-report.html`, so successive passes over a big repo
   can be opened side by side and compared.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.
+
+## Sensor coverage contract
+
+Each sensor must write `sensor-result.json` using the packaged
+`audit-lib/sensor-result.py` with explicit `--sensor`, `--raw`, `--normalized`,
+`--tools`, and `--output`. Tools JSON comes from `audit-lib/preflight.py` stdout.
+Record only tools required by that sensor. Missing tools, malformed raw output,
+missing normalization, and skipped required sensors leave coverage incomplete.
+Never interpret an empty findings file or missing tool as a clean audit. A PASS
+requires complete configured coverage or a recorded human coverage waiver with
+its exact missing tools and sensor names. Each triage decision records a stable
+finding ID and raw evidence path; preserve raw artifact hashes in the envelope.
+Normalization errors are blocking diagnostics, not silent skips.

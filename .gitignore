@@ -222,3 +222,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+!source/plugins/game-golden-screenshot-verifier/skills/game-golden-screenshot-verifier/lib/
+!source/plugins/game-golden-screenshot-verifier/skills/game-golden-screenshot-verifier/lib/**
+source/plugins/**/__pycache__/

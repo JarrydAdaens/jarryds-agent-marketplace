@@ -1,13 +1,6 @@
 ---
 name: audit-quality-sensor
-description: >-
-  Native-linter sweep for the open-source pre-publication audit. Use when
-  auditing a target repo for soft quality signals — dead code, commented-out
-  blocks, unused imports, style drift, TODO/FIXME census, empty placeholder
-  files — routed by the languages the repo actually contains. Read-only on the
-  target repo: writes only into the user-specified report folder, and refuses to
-  run without one. Triggers: "audit quality", "lint the repo for the audit",
-  "check for dead code before publish", pre-publish quality sweep.
+description: Use when asked to run the quality sensor in an explicitly requested publication audit. Requires an explicit target repository and report folder.
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.2"
@@ -79,3 +72,17 @@ Write these to `raw/quality-extras.json`.
 One `raw/<linter>.json` per linter run, plus `raw/quality-extras.json`, then
 normalize (`uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"`).
 Handoff to the guardrail for severity.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.
+
+## Evidence envelope
+
+After preserving raw tool output and successful normalization, write
+`sensor-result.json` with the packaged `audit-lib/sensor-result.py`. Record the
+required tool statuses, raw and normalized artifact hashes, and coverage status.
+Missing tools or malformed results remain incomplete, never a clean result.

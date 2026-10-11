@@ -13,35 +13,54 @@
       "source": "./plugins/cursor/open-source-auditor",
       "description": "Pre-publication open-source audit in one install: a specialist auditor persona plus nine skills - deterministic sensors (secrets, tone, quality, dependency, provenance, hygiene), a triaging PASS/BLOCK guardrail, Apache 2.0 licensing, and post-abort cleanup. Every run writes to an explicit, user-specified report folder.",
       "category": "auditor",
-      "keywords": ["audit", "open-source", "secrets", "license", "pre-publication", "publish"]
+      "keywords": [
+        "audit",
+        "open-source",
+        "secrets",
+        "license",
+        "pre-publication",
+        "publish"
+      ]
     },
     {
       "name": "repository-savior",
       "source": "./plugins/cursor/repository-savior",
       "description": "Migrates archived Mercurial and SVN repositories into native Git and publishes them to GitHub as PRIVATE repositories only: an orchestrating persona plus fifteen pipeline skills - discovery, inspection, snapshot, conversion, normalization, publishability and integrity verification, mandatory pre-publication audit, private-only repository creation via a hardened gateway, independent privacy verification, push, fresh-clone proof, and reporting. Every run takes an explicit migration-root argument.",
       "category": "migration",
-      "keywords": ["migration", "mercurial", "svn", "git", "github", "private", "legacy", "archive"]
+      "keywords": [
+        "migration",
+        "mercurial",
+        "svn",
+        "git",
+        "github",
+        "private",
+        "legacy",
+        "archive"
+      ]
     },
     {
       "name": "game-golden-screenshot-verifier",
       "source": "./plugins/cursor/game-golden-screenshot-verifier",
       "description": "Engine-independent runtime game verifier using deterministic input, screenshots, and versioned goldens.",
       "category": "verifier",
-      "keywords": ["game", "screenshot", "golden", "verifier"]
+      "keywords": [
+        "game",
+        "screenshot",
+        "golden",
+        "verifier"
+      ]
     },
     {
       "name": "wpf-visual-quality-gate",
       "source": "./plugins/cursor/wpf-visual-quality-gate",
       "description": "Evaluator-run visual quality gate for WPF apps using real input and screenshot evidence.",
       "category": "verifier",
-      "keywords": ["wpf", "ui", "screenshot", "quality-gate"]
-    },
-    {
-      "name": "orchestrate-localmodel-workflow",
-      "source": "./plugins/cursor/orchestrate-localmodel-workflow",
-      "description": "Frontier Boss supervising a single local pi worker: serial unattended story queue, RPC session supervision, and a three-attempt ladder that ends in a frontier rescue.",
-      "category": "workflow",
-      "keywords": ["orchestration", "local-model", "pi", "unattended", "boss"]
+      "keywords": [
+        "wpf",
+        "ui",
+        "screenshot",
+        "quality-gate"
+      ]
     }
   ]
 }

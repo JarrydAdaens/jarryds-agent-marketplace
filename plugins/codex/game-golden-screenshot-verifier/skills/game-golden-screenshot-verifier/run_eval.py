@@ -108,7 +108,28 @@ def _self_test() -> int:
     return 0
 
 
-def run(config_path: Path, mode: str) -> int:
+def approve_reference(current_path: Path, golden_path: Path, approved: bool) -> None:
+    """Only explicit approval replaces a reference; preserve its exact prior bytes."""
+    if not approved:
+        raise ValueError('reference update requires --approve-reference')
+    from PIL import Image
+    with Image.open(current_path) as candidate:
+        candidate.verify()
+    golden_path.parent.mkdir(parents=True, exist_ok=True)
+    if golden_path.exists():
+        import hashlib
+        digest = hashlib.sha256(golden_path.read_bytes()).hexdigest()
+        backup = golden_path.with_name(golden_path.name + '.' + digest + '.backup')
+        if not backup.exists():
+            shutil.copyfile(golden_path, backup)
+    temporary = golden_path.with_name(golden_path.name + '.pending')
+    shutil.copyfile(current_path, temporary)
+    temporary.replace(golden_path)
+
+
+def run(config_path: Path, mode: str, approved: bool = False) -> int:
+    if mode == 'golden' and not approved:
+        return _fail('reference update requires --approve-reference after reviewing the candidate')
     cfg = config_mod.load_config(config_path)
     seam_dir = config_path.resolve().parent  # the project-owned folder all relative paths anchor to
 
@@ -124,9 +145,6 @@ def run(config_path: Path, mode: str) -> int:
     if last_run_dir.exists():
         shutil.rmtree(last_run_dir)
     last_run_dir.mkdir(parents=True, exist_ok=True)
-
-    if mode == "eval" and not golden_path.is_file():
-        return _fail(f"no golden at '{golden_path}'. Run with --mode golden first, eyeball it, then re-run the eval.")
 
     from lib import capture  # lazy: keeps the metric path free of GUI deps
 
@@ -163,12 +181,14 @@ def run(config_path: Path, mode: str) -> int:
         _terminate(proc)
 
     if mode == "golden":
-        shutil.copyfile(current_path, golden_path)
+        approve_reference(current_path, golden_path, approved)
         shutil.copyfile(current_path, last_run_dir / "golden.png")
         print(f"EVAL GOLDEN CAPTURED: {golden_path}")
         print("Eyeball the PNG, then run the eval without --mode golden.")
         return 0
 
+    if not golden_path.is_file():
+        return _fail(f"no approved golden at '{golden_path}'; review the candidate at '{current_path}'.")
     shutil.copyfile(golden_path, last_run_dir / "golden.png")
     try:
         similarity = compare.image_similarity_pct(golden_path, current_path)
@@ -210,13 +230,24 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--mode", choices=("eval", "golden"), default="eval")
     parser.add_argument("--self-test", action="store_true",
                         help="verify dependencies and the metric without launching a game")
+    parser.add_argument('--approve-reference', action='store_true',
+                        help='explicitly approve a reference replacement; prior bytes are backed up')
+    parser.add_argument('--reference-candidate', type=Path,
+                        help='promote an already inspected candidate without launching the game')
     args = parser.parse_args(argv)
 
     if args.self_test:
         return _self_test()
     if not args.config:
         parser.error("--config is required (or use --self-test)")
-    return run(args.config, args.mode)
+    if args.reference_candidate:
+        if args.mode != 'golden' or not args.approve_reference:
+            parser.error('candidate promotion requires --mode golden --approve-reference')
+        cfg = config_mod.load_config(args.config)
+        approve_reference(args.reference_candidate,
+                          args.config.resolve().parent / 'goldens' / cfg.golden_name, True)
+        return 0
+    return run(args.config, args.mode, args.approve_reference)
 
 
 if __name__ == "__main__":

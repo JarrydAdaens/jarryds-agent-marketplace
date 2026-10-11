@@ -13,6 +13,7 @@ This file provides repository guidance for agentic IDEs and coding agents workin
 - `.agents/plugins/marketplace.json` — the Codex plugin catalog. Lists only `plugins/codex/*`.
 - `plugins/` — three host roots: `plugins/claude/`, `plugins/codex/`, and `plugins/cursor/`. Each holds only the plugins that host supports. A plugin available on more than one host is a separate copy under each root, not a shared payload. Payload lives in the default component directories (`skills/`, `agents/`), discovered natively on install. Each plugin folder carries exactly one host manifest: `.claude-plugin/plugin.json` under `plugins/claude/`, `.cursor-plugin/plugin.json` under `plugins/cursor/`, `.codex-plugin/plugin.json` under `plugins/codex/`. A plugin folder with more than one `.*-plugin/` directory is a bug.
 - `source/skills/` — plain skills not yet packaged as plugins (deployed by file copy for now). The goal is to migrate families here into `plugins/` over time.
+- `source/plugins/` — authoring payloads for Auditor, Savior, game screenshot, and WPF gate. Run `python scripts/generate-packages.py` after edits; host payloads are generated and remain self-contained. Host manifests stay under `plugins/<host>/` and are not copied between hosts. Codex and Cursor persona adapters omit Claude tool/model fields.
 - `context/` — material about this repo itself (notes, plans). Never deployed or installed.
 
 ## Hard rules
@@ -31,4 +32,5 @@ This file provides repository guidance for agentic IDEs and coding agents workin
 - Every plugin folder has a `README.md` stating what it does, how to invoke it, what the consuming machine must provide, and known limitations.
 - Skill frontmatter carries `name` (matching the folder), a "Use when…" `description`, an `argument-hint` when the skill takes arguments, and `metadata.version`.
 - Validate before committing plugin changes: `claude plugin validate .` from the repo root (Claude layout). For Cursor, confirm each plugin under `plugins/cursor/` has `.cursor-plugin/plugin.json` and that the Cursor catalog `source` paths resolve, then smoke-test via `~/.cursor/plugins/local/<plugin>/` + Reload Window. For Codex, confirm `.agents/plugins/marketplace.json` local sources under `plugins/codex/` and each `.codex-plugin/plugin.json` has `name`, `version`, and `description`.
+- Run `python scripts/check.py` for repository and component checks, including generated parity, host manifests, safety regressions, Savior tests, screenshot metric, and Oracle suites. Native Claude validation and actual installed-host activation remain separate rollout checks.
 - Commit messages follow the structured `commit-log` format (heading ≤72 chars, `~ Problem:` / body lines / `~ Resolution:`).

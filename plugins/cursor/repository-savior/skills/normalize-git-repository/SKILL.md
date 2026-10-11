@@ -1,13 +1,6 @@
 ---
 name: normalize-git-repository
-description: >-
-  Use when applying approved post-conversion normalization to a converted
-  Git repository: verified author identities, native Git tags, default
-  branch selection per explicit policy, removal of converter-only temporary
-  refs after recording them, and migration metadata outside historical
-  commits. Never rewrites history merely to make it look cleaner. Writes
-  only into the user-specified migration root and refuses to run without
-  one. Triggers: "normalize the converted repo", "clean up converter refs".
+description: Use when an authorized legacy repository migration reaches the normalize git repository stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -65,3 +58,10 @@ list that seems needed → `REQUIRES_HUMAN_DECISION`.
 ## Handoff
 
 `assess-github-publishability` inspects the normalized repository next.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

@@ -1,14 +1,6 @@
 ---
 name: audit-dependency-sensor
-description: >-
-  Dependency, vulnerability, and license-compatibility scanner for the
-  open-source pre-publication audit. Use when auditing a target repo for known
-  CVEs in dependencies and — critically for an Apache 2.0 release — copyleft or
-  unknown-license dependencies that create viral-scrap risk. Generates an SBOM,
-  scans it, and cross-checks with a multi-tool pass. Read-only on the target
-  repo: writes only into the user-specified report folder, and refuses to run
-  without one. Triggers: "audit dependencies", "SBOM the repo", "check for
-  copyleft licenses", "scan for CVEs before publish".
+description: Use when asked to run the dependency sensor in an explicitly requested publication audit. Requires an explicit target repository and report folder.
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.2"
@@ -78,3 +70,17 @@ write `raw/license-check.json`:
 `raw/license-check.json`, then normalize
 (`uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"`). The SBOM also
 feeds `audit-license-apply` for required NOTICE attributions.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.
+
+## Evidence envelope
+
+After preserving raw tool output and successful normalization, write
+`sensor-result.json` with the packaged `audit-lib/sensor-result.py`. Record the
+required tool statuses, raw and normalized artifact hashes, and coverage status.
+Missing tools or malformed results remain incomplete, never a clean result.

@@ -50,10 +50,12 @@ test('prices a known model and records the pricing table version', () => {
   assert.ok(r.pricing_table_version, 'version is stamped onto the receipt');
 });
 
-test('keeps the last-seen model when a session spans multiple models', () => {
+test('prices mixed sessions per response and preserves model attribution', () => {
   const r = receiptFor('sess-multi');
-  assert.equal(r.model, 'claude-sonnet-4-6');
+  assert.equal(r.model, 'mixed');
+  assert.deepEqual(r.models, ['claude-opus-4-8', 'claude-sonnet-4-6']);
   assert.equal(r.total_tokens, 600);
+  assert.equal(r.estimated_cost_usd, 0.0066);
 });
 
 test('captures session id, project path, and time bounds', () => {

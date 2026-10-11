@@ -1,0 +1,11 @@
+# These runtime helpers are source, despite the repository-wide lib/ ignore.
+!lib/
+lib/*
+!lib/format.js
+!lib/ledger.js
+!lib/paths.js
+!lib/pricing.js
+!lib/server-client.js
+!lib/summary.js
+!lib/util.js
+!lib/receipts.js

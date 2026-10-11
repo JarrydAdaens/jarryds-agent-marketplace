@@ -64,15 +64,23 @@ Then install the desired plugin from **Customize → Marketplace**. For local de
 | `repository-savior` | Migrates archived Mercurial/SVN repos to native Git and publishes them to GitHub as **private** only: orchestrating persona + fifteen pipeline skills, private-only gateways, resumable state machine. Requires an explicit migration-root. See `plugins/cursor/repository-savior/README.md`. |
 | `game-golden-screenshot-verifier` | Engine-independent runtime smoke verifier for games using deterministic input, screenshots, and versioned goldens. |
 | `wpf-visual-quality-gate` | Evaluator-run visual quality gate for WPF desktop UI changes using real input and screenshot evidence. |
-| `orchestrate-localmodel-workflow` | Frontier Boss driving a single local pi worker through an Agentic Rails story queue, unattended and serial, with a three-attempt ladder that ends in a frontier rescue. Experimental rails-dependent exception; see `plugins/cursor/orchestrate-localmodel-workflow/README.md`. |
 
 ## Skills awaiting packaging (`source/skills/`)
 
 | Family | Artifacts | Purpose |
 | --- | --- | --- |
 | General | `commit-log`, `grade` | Structured VCS commit messages; decisive letter-grading of artifacts |
-| Grugg | `grugg`, `grugg-compress` | Token-efficient communication mode and memory-file compression |
 | Oracle | `oracle-generate-stats`, `oracle-token-appraise`, `oracle-token-stats` | Token counting, file-cost appraisal, and session usage accounting |
 | WPF | `wpf-tree-sensor`, `wpf-starter-update` | UI Automation tree inspection; WPF-Starter reconciliation |
 
 These are synced into IDE config locations by file copy today; the plan is to package each family as an installable plugin over time.
+
+## Reproducible personal packages
+
+Author the Auditor, Savior, game screenshot, and WPF gate payloads in
+`source/plugins/`, then run `python scripts/generate-packages.py`. Host manifests
+remain native and generated packages include all runtime helpers. Run
+`python scripts/check.py` for parity, catalog, safety, and component checks.
+See `source/plugins/README.md` for adapter behavior and live activation scenarios.
+Package receipts label installed host activation as untested until rollout evidence
+exists.

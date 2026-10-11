@@ -1,14 +1,6 @@
 ---
 name: convert-svn-to-git
-description: >-
-  Use when converting a snapshotted SVN repository (or reachable SVN URL)
-  into a native local Git repository with git svn clone, using the
-  repository's ACTUAL trunk/branches/tags layout, explicit author mapping,
-  an empty-directory preservation policy, and post-processing of imported
-  SVN tag refs into native Git tags. Discloses any history semantics Git
-  cannot represent exactly. Writes only into the user-specified migration
-  root and refuses to run without one. Triggers: "convert the SVN repo",
-  "svn to git".
+description: Use when an authorized legacy repository migration reaches the convert svn to git stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -80,3 +72,10 @@ git version. Errors → `FAILED`; ambiguity → `REQUIRES_HUMAN_DECISION`.
 ## Handoff
 
 `normalize-git-repository` applies approved normalization next.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

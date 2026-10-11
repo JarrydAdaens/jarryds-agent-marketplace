@@ -49,3 +49,10 @@ Generalized from the Block Game 2 / Craft World autotest eval, previously
 maintained as a drop-in verifier in `agentic_rails_tooling` and extracted here
 as a plugin (v2.0: project paths now resolve against the config file rather
 than the runner's folder).
+
+## Packaging and activation evidence
+
+This payload is generated from one repository-owned authoring source. All runtime
+helpers and references are inside this package. The `.package-receipt.json` records
+the baseline and content digest; discovery and activation require a separate live
+host test. Invoke only for an explicit request or an adopted project workflow.

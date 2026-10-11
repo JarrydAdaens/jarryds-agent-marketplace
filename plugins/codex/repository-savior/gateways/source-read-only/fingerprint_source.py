@@ -67,6 +67,13 @@ def main() -> int:
         print(f"source path is not a directory: {source}", file=sys.stderr)
         return 2
 
+    if mode == 'record' and manifest_path.resolve().is_relative_to(source.resolve()):
+        print('refusing to write a manifest inside the read-only source', file=sys.stderr)
+        return 2
+    if mode == 'record' and manifest_path.exists():
+        print('refusing to overwrite an existing source fingerprint', file=sys.stderr)
+        return 2
+
     current = build_manifest(source)
 
     if mode == "record":

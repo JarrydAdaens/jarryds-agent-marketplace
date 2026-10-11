@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "repository-savior/config.schema.json",
+  "title": "Repository Savior configuration",
+  "description": "Persistent migration configuration. Deliberately contains NO visibility field: the only publication policy is PRIVATE_ONLY and it cannot be represented, let alone changed, here. additionalProperties is false throughout so a visibility key cannot be smuggled in.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "paths", "github", "naming", "history", "publication", "execution"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intake", "workspace", "completed", "verification_clones", "reports"],
+      "properties": {
+        "intake": { "type": "string", "minLength": 1 },
+        "workspace": { "type": "string", "minLength": 1 },
+        "completed": { "type": "string", "minLength": 1 },
+        "verification_clones": { "type": "string", "minLength": 1 },
+        "reports": { "type": "string", "minLength": 1 }
+      }
+    },
+    "github": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_owner"],
+      "properties": {
+        "target_owner": { "type": "string", "minLength": 1 },
+        "default_description_prefix": { "type": "string" },
+        "create_issues": { "type": "boolean", "default": false },
+        "create_wiki": { "type": "boolean", "default": false },
+        "create_projects": { "type": "boolean", "default": false }
+      }
+    },
+    "naming": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "lowercase": { "type": "boolean" },
+        "replace_spaces_with": { "type": "string" },
+        "collision_policy": { "const": "stop" }
+      }
+    },
+    "history": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "author_map": { "type": "string" },
+        "unknown_author_policy": { "enum": ["stop"] },
+        "default_branch_policy": { "enum": ["preserve-or-explicitly-map"] },
+        "include_closed_mercurial_branches": { "type": "boolean" },
+        "include_all_svn_branches": { "type": "boolean" },
+        "include_all_tags": { "type": "boolean" }
+      }
+    },
+    "publication": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "require_audit_pass": { "const": true },
+        "require_local_verification": { "const": true },
+        "require_remote_privacy_verification": { "const": true },
+        "require_fresh_clone_verification": { "const": true }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "continue_after_repository_failure": { "type": "boolean" },
+        "maximum_parallel_repositories": { "const": 1 },
+        "retain_failed_workspaces": { "type": "boolean" }
+      }
+    }
+  }
+}

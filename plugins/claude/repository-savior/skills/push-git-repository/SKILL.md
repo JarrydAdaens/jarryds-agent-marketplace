@@ -1,13 +1,6 @@
 ---
 name: push-git-repository
-description: >-
-  Use when pushing an approved converted repository to its
-  privacy-verified GitHub remote. Pushes exactly the verified ref
-  inventory — approved branches, tags, and separately approved LFS objects
-  — never a broad wildcard, never converter/audit/temporary/backup refs,
-  and never a force push. Writes only into the user-specified migration
-  root and refuses to run without one. Triggers: "push the migrated repo",
-  "upload the approved refs".
+description: Use when an authorized legacy repository migration reaches the push git repository stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -74,3 +67,10 @@ ref list fingerprint. Any rejection → `FAILED` with the push log.
 ## Handoff
 
 `clone-and-verify` proves the published result next.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

@@ -1,14 +1,6 @@
 ---
 name: audit-license-apply
-description: >-
-  Action-mode skill that applies Apache 2.0 to a target repo for open-source
-  release. Use ONLY after the guardrail returns PASS (or all blocking findings
-  are cleared/waived) and the human has approved licensing this repo. Adds LICENSE,
-  NOTICE, per-file headers (source only, per config), and a README License section
-  as ONE tip commit — never a history rewrite. Idempotent. Never pushes. Requires
-  the user-specified report folder (to verify the verdict and read config);
-  refuses to run without one. Triggers: "apply the license", "add Apache 2.0 to
-  this repo", "license the repo for publish".
+description: Use when asked to apply approved Apache licensing after a cleared audit. Requires an explicit target repository and report folder.
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.2"
@@ -68,3 +60,10 @@ section, report "already licensed, verified" and make no commit.
 4. Stamp per-file headers into the configured source file types only.
 5. Add/refresh the README License section.
 6. Stage and commit as one commit via `commit-log`. Stop. Report. Do not push.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

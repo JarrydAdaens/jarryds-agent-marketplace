@@ -71,7 +71,9 @@ const COMMANDS = {
       return fail(result.guidance);
     }
     const malformedNote = result.malformed ? `, skipped ${result.malformed} malformed line(s)` : '';
+    if (flags.json) return out(JSON.stringify(result, null, 2));
     out(`Scanned ${result.scanned} ${provider} session log(s), recorded ${result.receipts.length} receipt(s)${malformedNote}.`);
+    out(`Evidence: ${result.collection}; coverage: ${result.coverage}; missing usage: ${result.missingTelemetry || 0} assistant row(s).`);
     out(`Ledger: ${ledgerPath()}`);
   },
 

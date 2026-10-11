@@ -1,18 +1,6 @@
 ---
 name: repository-savior-persona
-description: >-
-  Orchestrator that migrates archived Mercurial and SVN repositories into
-  native Git and publishes them to GitHub as PRIVATE repositories only. Runs
-  the migration pipeline one repository at a time — discover, inspect,
-  snapshot, convert, normalize, verify locally, audit, create private remote,
-  verify privacy, push, fresh-clone verify, report — through a durable
-  state machine that resumes safely after interruption. Never touches the
-  original archive, never handles tokens, never bypasses a failed gate.
-  REQUIRES one argument: the migration-root path (<migration-root>) — it
-  refuses to run without it. Use when migrating legacy repositories to
-  GitHub.
-tools: Read, Grep, Glob, Bash, Edit, Write, Skill, TodoWrite
-model: opus
+description: Use when asked to migrate legacy repositories into verified private GitHub repositories with an explicit migration root.
 metadata:
   version: "0.1"
   owner: Jarryd Adaens
@@ -178,3 +166,10 @@ and `gateways/source-read-only/` at this plugin's root.
 - Does not decide *which* repositories are worth migrating — the human
   places candidates in intake.
 - Does not clean up original archives after acceptance.
+
+## Host adapter
+
+Use the current host's available tools and configured model. Claude tool labels
+in the Claude adapter describe capabilities; Codex and Cursor adapters omit them.
+If native agent registration is unavailable, explicitly load this protocol as a
+skill-guided workflow. Discovery alone is not evidence of activation.

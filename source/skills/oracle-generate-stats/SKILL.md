@@ -10,7 +10,7 @@ description: >
   Aborts with guidance if nothing is specified.
   Trigger: "generate stats", "refresh stats", "update .stats files",
   "run oracle-generate-stats on <target>", "stamp the cost on <artifact>",
-  or after compressing/editing context files when sidecar data needs
+  or after editing context files when sidecar data needs
   to be refreshed.
 disable-model-invocation: false
 metadata:
@@ -39,7 +39,7 @@ uv's cache. Subsequent runs hit the cache and are fast.
 - "generate stats for this directory"
 - "refresh the .stats files in context/"
 - "update stats after compression"
-- After any skill that modifies context files (e.g. caveman-compress)
+- After any skill that modifies context files
 
 ## Process
 

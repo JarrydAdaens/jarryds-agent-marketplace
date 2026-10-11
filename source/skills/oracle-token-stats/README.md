@@ -10,15 +10,19 @@ and per-provider adapters. It reads the token counts a provider already records 
 session logs, normalizes them into a receipt, keeps a JSONL ledger in your user profile,
 and reports current/recent/aggregate usage with **estimated** cost.
 
-It is the general-purpose successor to the caveman-specific `caveman-stats` skill: the
-caveman coupling is gone. Token totals always come from logs; caveman mode, if active,
-is recorded only as a `caveman:on` tag.
+Token totals come only from retained session logs. Existing historical receipts remain
+readable as stored; new scans do not inspect project markers for style metadata.
 
 ## Providers
 
-- **Claude Code** (implemented) — reads `$CLAUDE_CONFIG_DIR/projects/**.jsonl`
+- **Claude Code** (forensic parser) — recursively reads `$CLAUDE_CONFIG_DIR/projects/**/*.jsonl`
   (default `~/.claude/projects`), with full accounting of fresh input, cache-write,
   cache-read, and output tokens.
+  It counts request/message identities once, merges evolving category counters using
+  maxima, discovers nested agents, and prices each response with its recorded model.
+  Reasoning is included in output and is never added again to totals or cost.
+  The private transcript format is forensic evidence; retained logs provide partial
+  coverage and do not establish a supported collection or billing contract.
 - **Codex** (research stub) — deliberately not implemented against a private transcript
   format. See [`references/codex-research.md`](./references/codex-research.md).
 
@@ -84,6 +88,15 @@ known session-level gap.
 
 Only metadata and token counters are stored — never prompt text.
 
+Schema version 2 receipts record parser version, response identity, model attribution,
+directory-derived parentage, source SHA-256, and missing or ambiguous telemetry.
+Missing counters stay null on responses; session sums include known categories only.
+Legacy receipts remain as historical snapshots in the ledger. Reports select the
+highest schema version per session, then deduplicate shared responses in combined
+totals. Mixed-model filters and summaries use response attribution. Session listings
+show each transcript's own totals, which may overlap with forked/copied transcripts.
+Day/time filters use session snapshot timestamps, not exact response time windows.
+
 ## Cost model
 
 Rates live in [`scripts/pricing.json`](./scripts/pricing.json), versioned and kept
@@ -94,7 +107,8 @@ table version. Dollars are estimates, not billing truth.
 ## Tests
 
 ```
-node --test skills/oracle-token-stats/scripts/test/*.test.js
+cd source/skills/oracle-token-stats/scripts
+npm test
 ```
 
 ## See also

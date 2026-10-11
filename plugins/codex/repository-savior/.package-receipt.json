@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "family": "repository-savior",
+  "host": "codex",
+  "payload_sha256": "212274b1c1f8c41a4c54e54bbc98b4849fddd327b47da9fbf4f2781fcfcc9f25",
+  "source": "source/plugins/repository-savior",
+  "source_revision": "92154517cbca4c1656e922bfa3c46e510297f47d",
+  "source_state": "worktree",
+  "component_version": "0.1.1",
+  "activation": "not_tested",
+  "host_version": null,
+  "note": "Generation proves payload parity, not installed host activation."
+}

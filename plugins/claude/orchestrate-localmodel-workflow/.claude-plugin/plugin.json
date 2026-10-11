@@ -1,7 +1,0 @@
-{
-  "name": "orchestrate-localmodel-workflow",
-  "description": "Frontier Boss supervising a single local pi worker: serial unattended story queue, RPC session supervision, cheap independent verification, and a three-attempt ladder that hands a defeated story to a frontier rescue then stops the run.",
-  "author": {
-    "name": "Jarryd Adaens"
-  }
-}

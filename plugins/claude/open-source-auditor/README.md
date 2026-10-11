@@ -44,3 +44,10 @@ External scanner binaries, installed and pinned in your `audit-config/global.jso
 - One repo per run, sequentially — the sensors are memory-heavy (ScanCode especially); never fan audits out concurrently.
 - Audit mode is read-only on the target repo except for the report tree when you point the report folder inside it.
 - It never pushes; publishing remains a human action.
+
+## Packaging and activation evidence
+
+This payload is generated from one repository-owned authoring source. All runtime
+helpers and references are inside this package. The `.package-receipt.json` records
+the baseline and content digest; discovery and activation require a separate live
+host test. Invoke only for an explicit request or an adopted project workflow.

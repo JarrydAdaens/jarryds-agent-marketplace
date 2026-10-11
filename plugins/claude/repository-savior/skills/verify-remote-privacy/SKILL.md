@@ -1,14 +1,6 @@
 ---
 name: verify-remote-privacy
-description: >-
-  Use immediately after GitHub repository creation and BEFORE any push, to
-  independently verify the remote is private (isPrivate true, visibility
-  PRIVATE), under the configured owner, with the approved name. Any failure
-  blocks the migration outright — the remote is never used, never pushed
-  to, and never "fixed", because even brief public exposure is
-  unacceptable. Writes only into the user-specified migration root and
-  refuses to run without one. Triggers: "verify the remote is private",
-  "privacy check before push".
+description: Use when an authorized legacy repository migration reaches the verify remote privacy stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -62,3 +54,10 @@ name       == approved repository name
 Record the verification output in the transition and move to
 `REMOTE_PRIVACY_VERIFIED`. Only from this state may
 `push-git-repository` run.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

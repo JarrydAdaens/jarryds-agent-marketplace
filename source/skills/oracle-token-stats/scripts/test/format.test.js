@@ -2,7 +2,11 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { formatWindowUsage } from '../lib/format.js';
+import { formatWindowUsage, formatReceipt, formatSummary, formatCsv } from '../lib/format.js';
+import { scan } from '../adapters/claude.js';
+import { summarize } from '../lib/summary.js';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 test('formatWindowUsage renders composite rows, totals, and the UTC bucket', () => {
   const text = formatWindowUsage({
@@ -39,4 +43,23 @@ test('formatWindowUsage says so when the window is empty', () => {
   });
   assert.match(text, /Window: week/);
   assert.match(text, /No usage recorded in this window\./);
+});
+
+test('local reports and CSV expose forensic coverage, schema and uncertainty', () => {
+  const root = join(dirname(fileURLToPath(import.meta.url)), 'fixtures/projects');
+  const { receipts } = scan({ root });
+  const receipt = receipts.find((r) => r.session_id === 'sess-multi');
+  const text = formatReceipt(receipt);
+  assert.match(text, /Model:    mixed/);
+  assert.match(text, /forensic-local-transcript; partial-retained-corpus/);
+  assert.match(text, /Receipt:  v2, parser claude-jsonl\/2/);
+  assert.match(text, /partial estimate: token categories are missing/);
+  assert.match(text, /Reasoning:    missing or partial telemetry/);
+  const summary = formatSummary(summarize(receipts, 'model'), 'model');
+  assert.match(summary, /Coverage: partial-retained-corpus/);
+  assert.match(summary, /Pricing: 2026-06-18; bundled-rate estimates/);
+  assert.match(summary, /Warnings:.*missing-response-identity/);
+  const csv = formatCsv([receipt]);
+  assert.match(csv, /schema_version,parser_version,parent_session_id/);
+  assert.match(csv, /""status"":""partial-retained-corpus""/);
 });

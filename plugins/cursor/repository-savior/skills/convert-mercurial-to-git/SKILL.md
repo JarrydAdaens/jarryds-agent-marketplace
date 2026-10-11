@@ -1,13 +1,6 @@
 ---
 name: convert-mercurial-to-git
-description: >-
-  Use when converting a snapshotted Mercurial repository into a native local
-  Git repository with hg-fast-export (pinned) and git fast-import, with
-  explicit author mapping and explicit handling of named branches,
-  bookmarks, tags, closed branches, and multiple heads. Stops when a
-  branch-model mapping decision is ambiguous — it never guesses. Writes only
-  into the user-specified migration root and refuses to run without one.
-  Triggers: "convert the Mercurial repo", "hg to git".
+description: Use when an authorized legacy repository migration reaches the convert mercurial to git stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -77,3 +70,10 @@ and pinned version. Converter errors → `FAILED`; ambiguity →
 ## Handoff
 
 `normalize-git-repository` applies approved normalization next.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

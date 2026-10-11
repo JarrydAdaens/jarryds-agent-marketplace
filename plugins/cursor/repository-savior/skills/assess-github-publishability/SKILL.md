@@ -1,15 +1,6 @@
 ---
 name: assess-github-publishability
-description: >-
-  Use when checking a converted Git repository's full object history for
-  GitHub compatibility before publication: files over GitHub's 100 MiB
-  object limit, repository size and object count, Git LFS candidates,
-  generated binaries, path/filename incompatibilities, submodules or SVN
-  externals needing separate migration, and damaged objects. A repository
-  needing LFS or history rewriting stops for a human decision — historical
-  storage is never silently altered. Writes only into the user-specified
-  migration root and refuses to run without one. Triggers: "assess
-  publishability", "check for large files before push".
+description: Use when an authorized legacy repository migration reaches the assess github publishability stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -71,3 +62,10 @@ is an input to local verification), or moves to the holding state above.
 ## Handoff
 
 `verify-local-conversion` runs next when the gate passes.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

@@ -1,14 +1,6 @@
 ---
 name: inspect-source-history
-description: >-
-  Use when building the pre-conversion source inventory of one discovered
-  legacy repository (Mercurial or SVN): revisions, authors, branches,
-  bookmarks, tags, heads, timestamps, largest files, binary-heavy paths,
-  nested repositories, encoding problems, and corruption indicators. The
-  inventory becomes the baseline every later verification reconciles
-  against. Read-only on the source; writes only into the user-specified
-  migration root and refuses to run without one. Triggers: "inspect source
-  history", "inventory the repo before conversion".
+description: Use when an authorized legacy repository migration reaches the inspect source history stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -70,3 +62,10 @@ evidence recorded.
 
 `snapshot-source` fingerprints the source next; the conversion skills read
 this inventory to choose their mapping strategy and to stop on ambiguity.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

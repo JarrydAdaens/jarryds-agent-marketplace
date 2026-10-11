@@ -1,15 +1,6 @@
 ---
 name: audit-tone-sensor
-description: >-
-  Custom wordlist scanner for the open-source pre-publication audit. Use when
-  auditing a target repo for profanity, frustration venting, or negative
-  references to colleagues, employers, or vendors — in commit messages, code
-  comments, docs, and the Rails provenance surfaces (complaining.md, thinking.md,
-  dictations, execution logs) where venting is designed to accumulate. Read-only
-  on the target repo: writes only into the user-specified report folder, and
-  refuses to run without one. Expected to over-report; the guardrail separates
-  legitimate/quoted use from real violations. Triggers: "audit tone", "scan for
-  swearing", "check for venting at colleagues", pre-publish tone sweep.
+description: Use when asked to run the tone sensor in an explicitly requested publication audit. Requires an explicit target repository and report folder.
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.2"
@@ -93,3 +84,17 @@ uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"
 Do not decide what is a real violation. The guardrail classifies
 colleague-directed venting (Critical), profanity in commit messages (High), and
 quoted/legitimate matches (noise).
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.
+
+## Evidence envelope
+
+After preserving raw tool output and successful normalization, write
+`sensor-result.json` with the packaged `audit-lib/sensor-result.py`. Record the
+required tool statuses, raw and normalized artifact hashes, and coverage status.
+Missing tools or malformed results remain incomplete, never a clean result.

@@ -1,14 +1,6 @@
 ---
 name: verify-local-conversion
-description: >-
-  Use when running structural and content verification of a converted Git
-  repository against its source inventory: git fsck, commit-count
-  reconciliation, branch/tag/author/timestamp reconciliation, file-tree
-  manifest comparison of heads and tags, no stray converter or VCS metadata
-  files, default branch resolution, and a clean checkout. A repository is
-  not publishable until this passes. Writes only into the user-specified
-  migration root and refuses to run without one. Triggers: "verify the
-  conversion", "reconcile the converted repo against the source".
+description: Use when an authorized legacy repository migration reaches the verify local conversion stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -67,3 +59,10 @@ never claim success while verification is incomplete.
 ## Handoff
 
 `request-repository-audit` runs against the verified conversion next.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

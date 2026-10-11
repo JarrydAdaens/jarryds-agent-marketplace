@@ -1,14 +1,6 @@
 ---
 name: audit-cleanup
-description: >-
-  Post-abort janitor for the open-source pre-publication audit. Use after any
-  audit run is interrupted, crashed, or resumed — or before starting a new run
-  when a previous one did not finish cleanly. Finds orphaned scanner processes
-  (ScanCode/python especially), incomplete run folders, and stale artifacts;
-  reports first, kills/prunes only on approval. Requires the report folder to
-  inspect run artifacts (process cleanup works without it). Triggers: "audit
-  cleanup", "check for orphaned scanners", "the audit crashed", "clean up
-  before re-running the audit".
+description: Use when asked to clean up an interrupted audit. Requires an explicit target repository and report folder.
 argument-hint: <report-folder>
 metadata:
   version: "0.2"
@@ -111,3 +103,10 @@ starting an audit — an audit launched into a squeezed machine is how the
 A short cleanup summary in chat (processes killed with PIDs and reclaimed MB,
 folders pruned, headroom verdict). No file artifact — this skill maintains the
 system, it does not produce audit evidence.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

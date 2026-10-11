@@ -1,15 +1,6 @@
 ---
 name: write-migration-report
-description: >-
-  Use when writing the final migration report for one repository — both the
-  human-readable Markdown and the machine-readable JSON — covering source
-  fingerprint, converter and exact version, author/branch/tag mappings,
-  counts, large-file findings, audit result, GitHub destination, privacy
-  and fresh-clone verification, warnings, accepted deviations, and final
-  status. Also verifies the completion criteria before recording COMPLETE.
-  Writes only into the user-specified migration root and refuses to run
-  without one. Triggers: "write the migration report", "close out the
-  migration".
+description: Use when an authorized legacy repository migration reaches the write migration report stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -76,3 +67,10 @@ when `retain_failed_workspaces` is true.
 
 Final transition to `COMPLETE` (or the truthful terminal state), with both
 report paths recorded.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

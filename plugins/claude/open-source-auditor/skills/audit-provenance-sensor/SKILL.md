@@ -1,14 +1,6 @@
 ---
 name: audit-provenance-sensor
-description: >-
-  Deep copyright/provenance scanner for the open-source pre-publication audit.
-  Use when auditing a target repo for the "is there code I don't own" risk —
-  foreign copyright holders, employer copyright headers, third-party code pasted
-  in, and licenses embedded in source files. Runs ScanCode Toolkit for holder /
-  copyright / license / author extraction. Read-only on the target repo: writes
-  only into the user-specified report folder, and refuses to run without one.
-  Triggers: "audit provenance", "check for employer copyright", "did I paste
-  code I don't own", "scan copyright holders before publish".
+description: Use when asked to run the provenance sensor in an explicitly requested publication audit. Requires an explicit target repository and report folder.
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.3"
@@ -117,3 +109,17 @@ From `scancode.json`, extract and write `raw/provenance-findings.json`:
 normalize (`uv run "$LIB/normalize.py" "$REPO" "$RAW" "$OUT/normalized"`).
 Cross-references the dependency sensor's SBOM but does not duplicate its
 dependency-license verdict.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.
+
+## Evidence envelope
+
+After preserving raw tool output and successful normalization, write
+`sensor-result.json` with the packaged `audit-lib/sensor-result.py`. Record the
+required tool statuses, raw and normalized artifact hashes, and coverage status.
+Missing tools or malformed results remain incomplete, never a clean result.

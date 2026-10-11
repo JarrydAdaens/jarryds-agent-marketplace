@@ -58,7 +58,10 @@ def _scrub(obj, repo_root: Path):
                 out[k] = _scrub(v, repo_root)
         return out
     if isinstance(obj, list):
-        return [_scrub(v, repo_root) for v in obj]
+        values = [_scrub(v, repo_root) for v in obj]
+        if all(isinstance(v, dict) for v in values):
+            values.sort(key=lambda v: (_sort_key(v), json.dumps(v, sort_keys=True)))
+        return values
     return obj
 
 
@@ -89,6 +92,12 @@ def main() -> int:
     repo_root = Path(sys.argv[1]).resolve()
     raw_dir = Path(sys.argv[2])
     norm_dir = Path(sys.argv[3])
+    if raw_dir.resolve() == norm_dir.resolve():
+        print('raw and normalized directories must differ', file=sys.stderr)
+        return 2
+    if not raw_dir.is_dir():
+        print('raw directory is missing', file=sys.stderr)
+        return 2
     norm_dir.mkdir(parents=True, exist_ok=True)
 
     count = 0
@@ -96,14 +105,14 @@ def main() -> int:
         try:
             result = normalize_file(src, repo_root)
         except json.JSONDecodeError as exc:
-            print(f"skip {src.name}: not valid JSON ({exc})")
-            continue
+            print(f"invalid {src.name}: not valid JSON ({exc})", file=sys.stderr)
+            return 2
         dst = norm_dir / src.name
         dst.write_text(json.dumps(result, indent=2, sort_keys=True,
                                   ensure_ascii=False) + "\n", encoding="utf-8")
         count += 1
     print(f"normalized {count} file(s) into {norm_dir}")
-    return 0
+    return 0 if count else 2
 
 
 if __name__ == "__main__":

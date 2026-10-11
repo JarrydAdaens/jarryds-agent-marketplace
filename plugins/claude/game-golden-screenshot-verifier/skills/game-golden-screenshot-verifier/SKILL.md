@@ -1,12 +1,6 @@
 ---
 name: game-golden-screenshot-verifier
-description: >-
-  Use this skill to verify a game still boots and renders correctly: it
-  launches the game, drives it into a deterministic state, captures an
-  OS-level screenshot, and compares it against a versioned golden — exit 0
-  pass / 1 fail. Use it to run the verifier after changes, to capture or
-  refresh a golden after an intentional visual change, or to wire the
-  verifier into a game project for the first time.
+description: Use when asked to verify game rendering against an approved screenshot or when the project explicitly adopts this verifier.
 metadata:
   version: "2.0"
 ---
@@ -49,10 +43,20 @@ Throughout, `<skill-dir>` means the directory containing this SKILL.md, and
 
 ## Capturing a golden
 
-After first setup, or after an intentional visual change:
+Only after the user explicitly approves reference creation or replacement. First
+run eval to capture `last-run/current.png` (a missing golden fails after capture);
+inspect the candidate and record the approval. Promote the inspected candidate:
 
 ```bash
-uv run "<skill-dir>/run_eval.py" --config "<seam-dir>/eval_config.json" --mode golden
+uv run "<skill-dir>/run_eval.py" --config "<seam-dir>/eval_config.json" --mode golden --approve-reference --reference-candidate "<seam-dir>/last-run/current.png"
+```
+
+The prior reference is retained beside it with its SHA-256 in the backup name.
+Never refresh a golden merely to make a failing evaluation pass. Direct capture
+with an explicitly approved reference update is also available:
+
+```bash
+uv run "<skill-dir>/run_eval.py" --config "<seam-dir>/eval_config.json" --mode golden --approve-reference
 ```
 
 Review `<seam-dir>/goldens/golden.png` by eye, then commit it. Goldens are
@@ -77,3 +81,10 @@ and the default threshold is 95. It is sensitive: for scenes with unavoidable
 noise (animation, particles), lower `threshold` or capture a `region` that
 excludes the noisy area. A capture/golden size mismatch fails loudly rather
 than scoring low.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

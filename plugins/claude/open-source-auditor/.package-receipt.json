@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "family": "open-source-auditor",
+  "host": "claude",
+  "payload_sha256": "a6e5869b4a226bf0ffd6f7f532911c38ca7eb05c98f1bced5637a46331f4f038",
+  "source": "source/plugins/open-source-auditor",
+  "source_revision": "92154517cbca4c1656e922bfa3c46e510297f47d",
+  "source_state": "worktree",
+  "component_version": "92154517cbca4c1656e922bfa3c46e510297f47d",
+  "activation": "not_tested",
+  "host_version": null,
+  "note": "Generation proves payload parity, not installed host activation."
+}

@@ -1,15 +1,6 @@
 ---
 name: clone-and-verify
-description: >-
-  Use when proving a pushed migration by cloning the new GitHub repository
-  into a fresh, empty verification directory and verifying it end to end:
-  clone with normal auth, default branch checkout, all expected branches
-  and tags present, git fsck, commit IDs and tip tree hashes matching the
-  approved local conversion, LFS objects resolving, and configured smoke
-  tests. The clean clone — not the workspace — is the proof the published
-  repository is usable. Writes only into the user-specified migration root
-  and refuses to run without one. Triggers: "verify the published repo",
-  "fresh clone check".
+description: Use when an authorized legacy repository migration reaches the clone and verify stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -57,3 +48,10 @@ success on partial verification.
 ## Handoff
 
 `write-migration-report` closes the migration out.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

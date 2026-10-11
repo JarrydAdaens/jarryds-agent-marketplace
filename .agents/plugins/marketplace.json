@@ -22,18 +22,19 @@
     },
     {
       "name": "game-golden-screenshot-verifier",
-      "source": { "source": "local", "path": "./plugins/codex/game-golden-screenshot-verifier" },
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/game-golden-screenshot-verifier"
+      },
       "category": "verifier"
     },
     {
       "name": "wpf-visual-quality-gate",
-      "source": { "source": "local", "path": "./plugins/codex/wpf-visual-quality-gate" },
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/wpf-visual-quality-gate"
+      },
       "category": "verifier"
-    },
-    {
-      "name": "orchestrate-localmodel-workflow",
-      "source": { "source": "local", "path": "./plugins/codex/orchestrate-localmodel-workflow" },
-      "category": "workflow"
     }
   ]
 }

@@ -1,13 +1,6 @@
 ---
 name: discover-legacy-repositories
-description: >-
-  First stage of the Repository Savior migration pipeline. Use when scanning
-  the migration intake directory to classify candidate repositories as
-  Mercurial, SVN repository storage, SVN working copy, existing Git, plain
-  folder, or unknown/damaged — before any conversion. Writes only into the
-  user-specified migration root and refuses to run without one. Triggers:
-  "discover legacy repositories", "scan the intake folder", "classify the
-  archived repos", start of a migration batch.
+description: Use when an authorized legacy repository migration reaches the discover legacy repositories stage. Requires an explicit migration root.
 argument-hint: <migration-root>
 metadata:
   version: "0.1"
@@ -77,3 +70,10 @@ reset; resumption picks up from it.
 
 Per repository, the persona proceeds to `inspect-source-history`. Ambiguous
 classifications go to `REQUIRES_HUMAN_DECISION`, not to a guessed converter.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

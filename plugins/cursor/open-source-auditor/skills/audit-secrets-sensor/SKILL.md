@@ -1,13 +1,6 @@
 ---
 name: audit-secrets-sensor
-description: >-
-  Deterministic secret scanner for the open-source pre-publication audit. Use
-  when auditing a target repo for leaked API keys, tokens, credentials, private
-  keys, internal URLs, or company identity — in current files AND full git
-  history. Read-only on the target repo: writes only into the user-specified
-  report folder, and refuses to run without one. Highest-stakes sensor; run it
-  first. Triggers: "audit secrets", "scan for leaked keys", "check history for
-  credentials", pre-publish secret sweep.
+description: Use when asked to run the secrets sensor in an explicitly requested publication audit. Requires an explicit target repository and report folder.
 argument-hint: <target-repo> <report-folder> [run-timestamp]
 metadata:
   version: "0.2"
@@ -108,3 +101,17 @@ here.
 
 Do not triage. Leave severity, true-vs-false-positive, and the PASS/BLOCK
 verdict to `audit-publish-guardrail`.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.
+
+## Evidence envelope
+
+After preserving raw tool output and successful normalization, write
+`sensor-result.json` with the packaged `audit-lib/sensor-result.py`. Record the
+required tool statuses, raw and normalized artifact hashes, and coverage status.
+Missing tools or malformed results remain incomplete, never a clean result.

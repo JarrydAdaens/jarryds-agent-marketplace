@@ -1,6 +1,6 @@
 {
   "name": "open-source-auditor",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Takes one target repo from 'private and unknown' to a publish-verdict PASS for open-source release under Apache 2.0. Ships the auditor persona, six read-only sensors, the triaging PASS/BLOCK guardrail, the license applier, and the post-abort janitor as a single bundle. Requires an explicit report-folder argument - it never writes anywhere you did not name.",
   "author": {
     "name": "Jarryd Adaens"

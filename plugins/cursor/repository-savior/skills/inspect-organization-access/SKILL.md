@@ -1,14 +1,6 @@
 ---
 name: inspect-organization-access
-description: >-
-  Use when reporting who can effectively access a private repository under
-  the configured GitHub owner: the organization's base repository
-  permission and relevant team or user grants. Reporting and gating only —
-  it never modifies organization permissions, and it never assumes members
-  can or cannot access private repositories. Writes only into the
-  user-specified migration root and refuses to run without one. Triggers:
-  "who can see this private repo", "inspect org access", "check base
-  permissions before publishing".
+description: Use when an authorized legacy repository migration reaches the inspect organization access stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -67,3 +59,10 @@ summary in the migration report.
 Append an informational transition; this skill does not advance the main
 state, but an inability to confirm the owner exists and is usable is a
 `BLOCKED` condition before creation.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.

@@ -10,7 +10,7 @@ metadata:
 
 # WPF Visual Quality Gate
 
-Use this evaluation for any WPF change that affects visible UI, navigation,
+Use this evaluation only on explicit request or project adoption for a WPF change that affects visible UI, navigation,
 state presentation, layout, or user interaction. Visible UI work is not done
 until the running app has been launched, driven through the changed
 interaction with real input, and screenshot-verified against explicit pass

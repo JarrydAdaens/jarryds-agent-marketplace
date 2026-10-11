@@ -1,14 +1,6 @@
 ---
 name: request-repository-audit
-description: >-
-  Use when requesting and consuming the mandatory pre-publication security
-  audit of a converted Git repository's complete history — secrets, keys,
-  connection strings, personal data, proprietary third-party material,
-  large binaries, licensing, dangerous scripts. Only an audit result of
-  "pass" permits publication; a private destination is never remediation.
-  Writes only into the user-specified migration root and refuses to run
-  without one. Triggers: "audit the converted repo", "run the
-  pre-publication audit", "is this history safe to push".
+description: Use when an authorized legacy repository migration reaches the request repository audit stage. Requires an explicit migration root.
 argument-hint: <migration-root> <repository-id>
 metadata:
   version: "0.1"
@@ -74,3 +66,10 @@ never a skipped gate.
 
 Only from `AUDIT_PASSED` does the persona proceed to
 `create-private-github-repository`.
+
+## Activation and scope
+
+Run only for the explicit request or adopted project workflow described above.
+A file extension, repository discovery, documentation edit, or unrelated code change
+does not authorize this operation. Require the user or project packet to name the
+output location before writing project artifacts.
