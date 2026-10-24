@@ -7,6 +7,13 @@
   "description": "Jarryd's personal, opinionated plugins, skills, and agents for agentic coding tools.",
   "plugins": [
     {
+      "name": "code-audit",
+      "source": "./plugins/claude/code-audit",
+      "description": "Standalone evidence-backed changeset review with correctness, test, security, reuse, architecture and platform specialists; immutable Git scope, strict sensor/CI evidence, coverage-aware verdicts, private portable reports and process hypothesis packages.",
+      "category": "review",
+      "keywords": ["code-review", "audit", "correctness", "reuse", "evidence", "changeset"]
+    },
+    {
       "name": "open-source-auditor",
       "source": "./plugins/claude/open-source-auditor",
       "description": "Pre-publication open-source audit in one install: a specialist auditor persona plus nine skills - deterministic sensors (secrets, tone, quality, dependency, provenance, hygiene), a triaging PASS/BLOCK guardrail, Apache 2.0 licensing, and post-abort cleanup. Every run writes to an explicit, user-specified report folder.",

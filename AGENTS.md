@@ -14,6 +14,7 @@ This file provides repository guidance for agentic IDEs and coding agents workin
 - `plugins/` — three host roots: `plugins/claude/`, `plugins/codex/`, and `plugins/cursor/`. Each holds only the plugins that host supports. A plugin available on more than one host is a separate copy under each root, not a shared payload. Payload lives in the default component directories (`skills/`, `agents/`), discovered natively on install. Each plugin folder carries exactly one host manifest: `.claude-plugin/plugin.json` under `plugins/claude/`, `.cursor-plugin/plugin.json` under `plugins/cursor/`, `.codex-plugin/plugin.json` under `plugins/codex/`. A plugin folder with more than one `.*-plugin/` directory is a bug.
 - `source/skills/` — plain skills not yet packaged as plugins (deployed by file copy for now). The goal is to migrate families here into `plugins/` over time.
 - `source/plugins/` — authoring payloads for Auditor, Savior, game screenshot, and WPF gate. Run `python scripts/generate-packages.py` after edits; host payloads are generated and remain self-contained. Host manifests stay under `plugins/<host>/` and are not copied between hosts. Codex and Cursor persona adapters omit Claude tool/model fields.
+- `plugins/claude/code-audit/` — standalone Claude-only Code Audit 1.0 authoring package, maintained directly here. It is not part of the shared-family generator; do not generate Codex/Cursor copies without a separate request.
 - `context/` — material about this repo itself (notes, plans). Never deployed or installed.
 
 ## Hard rules

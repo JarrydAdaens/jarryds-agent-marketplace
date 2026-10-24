@@ -1,0 +1,5 @@
+{
+  "name": "code-audit",
+  "description": "Standalone evidence-backed changeset review: immutable Git scope, specialist correctness/test/reuse review, pinned sensors, coverage-aware verdicts, private reports, and process experiment packages.",
+  "author": { "name": "Jarryd Adaens" }
+}
