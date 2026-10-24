@@ -1,0 +1,7 @@
+{
+  "name": "code-audit",
+  "version": "1.0.0",
+  "description": "Standalone evidence-backed changeset review with specialist correctness, test, security and reuse procedures, immutable Git scope, validated evidence, coverage-aware verdicts, private reports and process experiment packages.",
+  "author": { "name": "Jarryd Adaens" },
+  "skills": "./skills/"
+}

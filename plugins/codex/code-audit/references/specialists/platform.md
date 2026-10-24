@@ -1,0 +1,5 @@
+# Platform
+
+Use references/contracts.md and references/platform-runtime.md with immutable assigned snapshots. Return a structured specialist receipt; do not edit source, control devices or execute builds. Determine the actual platform; C# alone does not establish UWP.
+
+Inspect bindings/resources, ViewModel wiring, dispatcher affinity, async/cancellation lifecycle, event subscription cleanup, resource ownership, navigation/suspension, supported APIs, UI responsiveness and allocation risks. Read surrounding callers and string/reflection-based wiring rather than trusting only dependency graphs. Validate available build/analyzer evidence against exact solution/configuration/architecture/toolchain and integration tree. If runtime evidence is needed, formulate a bounded exact-build request to the existing governing harness and preserve its SPUD/SNAG ownership/failure semantics. Never claim complete functional/accessibility coverage from one UI tree or playback. Cover all assigned paths or mark partial; request independent blocker verification.

@@ -1,0 +1,11 @@
+# Platform and exact-build runtime evidence
+
+For affected C#/XAML paths, inspect binding/resource lookup (including string keys and reflection), ViewModel wiring, dispatcher affinity, async lifecycle, cancellation, events/unsubscribe, disposal, navigation/suspension, supported APIs, UI responsiveness and allocations. Required platform review may conclude a framework is not used, but must explain the actual platform's constraints. Do not assume all C# is UWP.
+
+Import compiler/analyzer evidence only when the producing Windows toolchain identifies actual solution/projects, SDK, architecture, configuration and restore inputs. Confirm analyzers loaded affected projects. A portable helper library build does not establish a UWP application build. Dependency graphs do not fully capture binding, reflection, DI or event/resource wiring; search surrounding code.
+
+Runtime uses an existing governing harness. Request exact I/tree/application build, scenario/recording version, initial state, expected observations, assertions and evidence. Let that harness own device selection, deployment and recovery. Do not commandeer the developer workstation or create a replacement SPUD/SNAG platform.
+
+Preserve exclusive controlling ownership; never displace another controller. Prefer SNAG deterministic playback/postconditions, SPUD for directed investigation. Locked sessions are infrastructure failure; preserve partial evidence and terminate. Loaded SNAG playback can finish after connection loss; SPUD pauses for a governing instruction. Three consecutive crashes warn but do not impose an invented retry ban. Use semantic selectors or defined relative geometry; do not fall back to stale desktop coordinates.
+
+`check-runtime` is required only when trusted policy selects runtime. Its check envelope additionally has `runtime` fields: harness, device_fingerprint, scenario_version, assertions, initial_state, final_state, ownership (`exclusive-granted`), failure_kind (`none` or demonstrated `product` for completed runs), application_hash. Wrong build, locks, disconnections, test defects or ungranted ownership cannot complete required evidence. Include appropriate evidence in the retained report. No tree dump or passing recording proves paths/assertions beyond those inspected.

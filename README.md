@@ -60,7 +60,7 @@ Then install the desired plugin from **Customize → Marketplace**. For local de
 
 | Plugin | Purpose |
 | --- | --- |
-| `code-audit` (Claude Code) | Standalone changeset review with specialist correctness/test/reuse coverage, pinned Git scope, deterministic evidence/verdicts, private reports and process hypothesis packages. See [Code Audit 1.0](plugins/claude/code-audit/README.md). |
+| `code-audit` (Claude Code, Codex) | Standalone changeset review with specialist correctness/test/reuse coverage, pinned Git scope, deterministic evidence/verdicts, private reports and process hypothesis packages. See [Claude Code](plugins/claude/code-audit/README.md) or [Codex](plugins/codex/code-audit/README.md). |
 | `open-source-auditor` | Pre-publication open-source audit in one install: auditor persona + six deterministic sensors (secrets, tone, quality, dependency, provenance, hygiene), a triaging PASS/BLOCK guardrail, Apache 2.0 licensing, and post-abort cleanup. Writes only to an explicit, user-specified report folder. See `plugins/cursor/open-source-auditor/README.md`. |
 | `repository-savior` | Migrates archived Mercurial/SVN repos to native Git and publishes them to GitHub as **private** only: orchestrating persona + fifteen pipeline skills, private-only gateways, resumable state machine. Requires an explicit migration-root. See `plugins/cursor/repository-savior/README.md`. |
 | `game-golden-screenshot-verifier` | Engine-independent runtime smoke verifier for games using deterministic input, screenshots, and versioned goldens. |

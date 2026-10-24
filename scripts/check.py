@@ -37,8 +37,9 @@ def main():
                 raise ValueError(f'mixed host manifests: {folder}')
     failures |= run(['uv', 'run', '--with', 'pillow', '--with', 'numpy',
                      'python', '-m', 'unittest', 'discover', '-s', 'tests', '-v'])
-    failures |= run([sys.executable, '-m', 'unittest', 'discover', '-s',
-                     'plugins/claude/code-audit/tests', '-v'])
+    for host in ['claude', 'codex']:
+        failures |= run([sys.executable, '-m', 'unittest', 'discover', '-s',
+                         f'plugins/{host}/code-audit/tests', '-v'])
     failures |= run(['uv', 'run', '--with', 'pytest', '--with', 'jsonschema',
                      '--with', 'pyyaml', '--with', 'pillow', '--with', 'numpy',
                      'pytest', 'source/plugins/repository-savior/tests', '-q'])
@@ -58,6 +59,7 @@ def main():
         failures |= run([claude, 'plugin', 'validate', 'plugins/claude/code-audit'])
     else:
         print('NOT TESTED: native Claude catalog validation (CLI unavailable)')
+    failures |= run([sys.executable, 'scripts/check-code-audit-codex.py'])
     return bool(failures)
 
 
