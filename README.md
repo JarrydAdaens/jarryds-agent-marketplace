@@ -70,7 +70,7 @@ Then install the desired plugin from **Customize → Marketplace**. For local de
 
 | Family | Artifacts | Purpose |
 | --- | --- | --- |
-| General | `commit-log`, `grade` | Structured VCS commit messages; decisive letter-grading of artifacts |
+| General | `commit-log`, `grade`, `wtf` | Structured VCS commit messages; decisive letter-grading of artifacts; freeze-and-explain recovery when an agent's output or work status stops making sense |
 | Oracle | `oracle-generate-stats`, `oracle-token-appraise`, `oracle-token-stats` | Token counting, file-cost appraisal, and session usage accounting |
 | WPF | `wpf-tree-sensor`, `wpf-starter-update` | UI Automation tree inspection; WPF-Starter reconciliation |
 

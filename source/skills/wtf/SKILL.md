@@ -5,8 +5,11 @@ description: >-
   unexpected agent behavior, unclear work status, or a decision they cannot follow.
   Reconstruct the relevant context and give a short, literal explanation that
   restores understanding and control.
+disable-model-invocation: true
+disallowed-tools: Edit, Write, NotebookEdit, Task, Agent, Workflow, Skill, SendMessage, TaskStop, Artifact
+argument-hint: "[optional: the confusing point]"
 metadata:
-  version: "1.0"
+  version: "1.1"
   argument-hint: "[optional: the confusing point]"
 ---
 
@@ -42,10 +45,9 @@ than condensing every detail from the original answer.
   Keep any qualification that changes the user's decision. Do not turn uncertainty
   into a confident yes or no to save words.
 - Use existing context first. If one factual gap prevents a useful answer, make
-  the smallest relevant read-only check that available tools and permissions
-  allow. Verify current product claims when needed. Do not start a broad audit or
-  troubleshoot indefinitely. If the gap remains, say what is unknown and what
-  evidence would settle it.
+  the smallest relevant read-only check the freeze below allows. Do not start a
+  broad audit or troubleshoot indefinitely. If the gap remains, say what is
+  unknown and what evidence would settle it.
 - Name the actual application, component, location, or process. Do not guess
   whether the user is in a terminal, desktop app, browser, or another machine.
   Give an instruction's execution surface when it matters.
@@ -72,22 +74,14 @@ Use literal, grammatical prose based on ASD-STE100 Simplified Technical English:
   components and their relationship, or give one small literal example. Merely
   deleting words from the same jargon-heavy structure is insufficient.
 
-These are STE-based writing constraints, not a complete implementation of the
-standard's controlled dictionary. Do not claim formal ASD-STE100 compliance
-without checking the applicable rules and vocabulary. Do not add this caveat to
-each explanation; it describes the skill's assurance limit.
+These are STE-based writing constraints, not the standard's controlled
+dictionary. Do not claim formal ASD-STE100 compliance, and do not mention this
+limit in an explanation.
 
 Default to one short paragraph of two to four sentences, usually under 100 words.
-Aim for no more than 20% of both the words and characters of the failed
-explanation. This is a shortening target, not a reason to lose grammar, cause,
-accuracy, or a necessary warning. A short original may need a slightly longer
-replacement. A long original does not justify a long answer.
-
-For that comparison, use only the relevant original explanatory passage or
-passages. Exclude unrelated turns and pasted logs or code dumps. Count
-whitespace-separated words and all characters, including whitespace and Markdown,
-on both sides. Do not pad the baseline or show counting arithmetic to the user.
-Exact counting tools are not required for this target.
+Make the explanation shorter than the original, and as short as accuracy allows.
+Never trade away grammar, cause, or a necessary warning to save words. A long
+original does not justify a long answer.
 
 Use a few complete-sentence bullets only when separate states or choices are
 easier to understand that way. Avoid large tables, diagrams, and code blocks by
@@ -107,19 +101,40 @@ Include only what this question needs:
   correct it briefly. Avoid long apologies, defensiveness, or claims about the
   user's emotions. Ordinary confusion does not require an admission of fault.
 
-The invocation interrupts execution so the user can catch up. Do not start edits,
-configuration changes, builds, commits, or new workers as part of explaining.
-Do not silently terminate work already running; distinguish its last known state
-from verified current progress when relevant. A separate explicit action request
-can authorize action, but explain first and honor any discussion-only boundary.
+The invocation interrupts execution so the user can catch up. This is a freeze:
+explain, and change nothing. Use only tools and commands that read. Whatever a
+tool is named on this host, do not call it if it writes a file, publishes a page,
+creates or updates a document, sends a message, starts or controls a worker,
+invokes another skill or command, or changes anything outside this conversation.
+Answer in the conversation itself. The frontmatter withdraws several of these
+tools, but the rule covers every tool the list does not name.
 
-Answer follow-up questions in this clear style. Resume implementation when the
-user asks to continue or gives a code task. Keep earlier authorization within
-that scope; do not turn recovery into repeated permission requests.
+Reading stays open. Any command that only reports stored state is allowed, and
+one targeted documentation lookup may verify a factual claim about a product's
+current behavior. Do not invoke the project's package manager, build tool, test
+runner, or application for any purpose, including listing, inspection, and
+dry-run modes, whether or not they modify a file. If a check falls between these
+cases, treat it as not allowed and say what you would run instead.
+
+If you notice an unrelated defect while explaining, state it in one sentence and
+stop. Do not write the fix anywhere, including a scratch or temporary file.
+
+Do not stop, pause, redirect, or message work already running, announced or not.
+Report its last known state and distinguish it from verified current progress.
+
+An action request in the same message as the invocation does not lift the freeze,
+and neither does one the user made before it. Explain first, then name the action
+you would take as the next step. Only a message the user sends after the
+explanation can authorize it.
+
+Answer follow-up questions in this clear style. The freeze covers this turn only.
+On a later turn, when the user asks to continue or gives a code task, resume
+implementation and treat that authorization as still in force; do not turn
+recovery into repeated permission requests.
 
 If `/wtf` is repeated, keep the original unresolved topic as the reference. Find
 a different missing connection or use a smaller literal example. Do not keep
-shrinking the last rewrite by another 80%. Ask one focused question only if the
+cutting words from the last rewrite. Ask one focused question only if the
 remaining ambiguity prevents a useful explanation.
 
 Before replying, check: can the user tell what happened, why it matters, and what
