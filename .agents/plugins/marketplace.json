@@ -47,6 +47,14 @@
         "path": "./plugins/codex/wpf-visual-quality-gate"
       },
       "category": "verifier"
+    },
+    {
+      "name": "codex-unfucker",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codex/codex-unfucker"
+      },
+      "category": "utilities"
     }
   ]
 }
