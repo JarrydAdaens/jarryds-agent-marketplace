@@ -52,6 +52,8 @@ def main():
                   'oracle-token-appraise/test_appraise.py']:
         failures |= run(['uv', 'run', '--with', 'pytest', '--with', 'tiktoken', 'pytest',
                          'source/skills/' + suite, '-q'])
+    failures |= run(['uv', 'run', '--with', 'pytest', 'pytest',
+                     'source/skills/youtube-context/scripts/test_youtube_context.py', '-q'])
     failures |= run(['git', 'diff', '--check'])
     claude = shutil.which('claude')
     if claude:
