@@ -1,9 +1,9 @@
 ---
 name: chimp-out-report
 description: Use when the operator asks for a chimp-out report or wants historical AI conversations investigated for anger, confusion, repeated corrections, and the workflow failures that drove them.
+argument-hint: "<private-output-folder> [profile-or-archive-roots] [date-or-project-scope]"
 metadata:
-  version: "1.0"
-  argument-hint: "<private-output-folder> [profile-or-archive-roots] [date-or-project-scope]"
+  version: "1.1"
 ---
 
 # Chimp-out report

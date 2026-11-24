@@ -66,6 +66,18 @@
         "screenshot",
         "quality-gate"
       ]
+    },
+    {
+      "name": "skillz",
+      "source": "./plugins/claude/skillz",
+      "description": "Favorite miscellaneous skills in one plugin: commit-log for structured commit messages, grade for decisive letter grades, wtf for freeze-and-explain recovery, and chimp-out-report for finding operator frustration in local AI conversation archives.",
+      "category": "productivity",
+      "keywords": [
+        "commit",
+        "grade",
+        "explain",
+        "workflow-research"
+      ]
     }
   ]
 }

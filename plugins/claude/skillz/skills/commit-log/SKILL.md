@@ -1,14 +1,14 @@
 ---
 name: commit-log
 description: >-
-  Use this skill when the user asks for a commit message, commit log, changelog
+  Use when the user asks for a commit message, commit log, changelog
   entry, version-control summary, or copy-paste check-in wording after work is
   completed. It writes a standardized commit log from a fixed template for git,
   Perforce, Mercurial, SVN, or similar VCS workflows.
 disable-model-invocation: false
 argument-hint: "[--commit] [scope or ticket hint]"
 metadata:
-  version: "1.7"
+  version: "1.8"
 ---
 
 # Commit log

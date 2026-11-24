@@ -1,12 +1,12 @@
 ---
 name: grade
 description: >-
-  Use this skill when the user asks to grade, rate, assess, or compare the
+  Use when the user asks to grade, rate, assess, or compare the
   quality of an artifact such as code, design, persona, workflow, document, or
   plan. It returns a decisive letter grade (S, A-F) with concise evidence.
 disable-model-invocation: false
 metadata:
-  version: "1.3"
+  version: "1.4"
 ---
 
 # Grade

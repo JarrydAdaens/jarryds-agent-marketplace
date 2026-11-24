@@ -80,7 +80,7 @@
     },
     {
       "id": 7,
-      "prompt": "/commit-log --commit\n\nI added retry logic with exponential backoff to the HTTP client.",
+      "prompt": "/skillz:commit-log --commit\n\nI added retry logic with exponential backoff to the HTTP client.",
       "expected_output": "A commit log is output first, then a git add and git commit are executed because --commit granted permission. No push.",
       "assertions": [
         "Output includes a commit log in the correct format before any git commands run",
@@ -93,7 +93,7 @@
     },
     {
       "id": 8,
-      "prompt": "/commit-log BUG-441\n\nI fixed the off-by-one error in the pagination offset.",
+      "prompt": "/skillz:commit-log BUG-441\n\nI fixed the off-by-one error in the pagination offset.",
       "expected_output": "A commit log using the BUG-441 ticket as the heading prefix. No commit is run, because --commit was not supplied and the user did not ask in plain language.",
       "assertions": [
         "The heading uses the [BUG-441] ticket prefix taken from the arguments",

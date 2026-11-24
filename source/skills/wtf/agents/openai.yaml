@@ -1,4 +1,0 @@
-interface:
-  display_name: "WTF — What the Fuck?"
-  short_description: "Explain the confusing part in short, literal language."
-  default_prompt: "Use $wtf to explain the confusing part of our recent conversation in short, literal language so I can understand what is happening."

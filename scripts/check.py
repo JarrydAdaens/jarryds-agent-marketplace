@@ -54,6 +54,8 @@ def main():
                          'source/skills/' + suite, '-q'])
     failures |= run(['uv', 'run', '--with', 'pytest', 'pytest',
                      'source/skills/youtube-context/scripts/test_youtube_context.py', '-q'])
+    failures |= run([sys.executable, 'plugins/claude/skillz/skills/chimp-out-report/'
+                     'scripts/test-chimp-out-report.py', '-v'])
     failures |= run(['git', 'diff', '--check'])
     claude = shutil.which('claude')
     if claude:

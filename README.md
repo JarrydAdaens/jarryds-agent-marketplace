@@ -21,6 +21,7 @@ This is deliberately **personal and opinionated**. Plugins may target a technolo
 /plugin marketplace add <git-url-or-local-path-to-this-repo>
 /plugin install open-source-auditor@jarryds-agents
 /plugin install repository-savior@jarryds-agents
+/plugin install skillz@jarryds-agents
 ```
 
 A local clone path is fine while experimenting.
@@ -65,13 +66,12 @@ Then install the desired plugin from **Customize → Marketplace**. For local de
 | `repository-savior` | Migrates archived Mercurial/SVN repos to native Git and publishes them to GitHub as **private** only: orchestrating persona + fifteen pipeline skills, private-only gateways, resumable state machine. Requires an explicit migration-root. See `plugins/cursor/repository-savior/README.md`. |
 | `game-golden-screenshot-verifier` | Engine-independent runtime smoke verifier for games using deterministic input, screenshots, and versioned goldens. |
 | `wpf-visual-quality-gate` | Evaluator-run visual quality gate for WPF desktop UI changes using real input and screenshot evidence. |
+| `skillz` (Claude Code) | Favorite miscellaneous skills in one plugin: `commit-log` (structured VCS commit messages), `grade` (decisive letter grades), `wtf` (freeze-and-explain recovery), and `chimp-out-report` (operator frustration in local AI conversation archives). See [plugins/claude/skillz/README.md](plugins/claude/skillz/README.md). |
 
 ## Skills awaiting packaging (`source/skills/`)
 
 | Family | Artifacts | Purpose |
 | --- | --- | --- |
-| General | `commit-log`, `grade`, `wtf` | Structured VCS commit messages; decisive letter-grading of artifacts; freeze-and-explain recovery when an agent's output or work status stops making sense |
-| Workflow research | `chimp-out-report` | Find operator anger and confusion across local AI conversation archives; produce contextual workflow evidence and a searchable report |
 | Oracle | `oracle-generate-stats`, `oracle-token-appraise`, `oracle-token-stats` | Token counting, file-cost appraisal, and session usage accounting |
 | WPF | `wpf-tree-sensor`, `wpf-starter-update` | UI Automation tree inspection; WPF-Starter reconciliation |
 

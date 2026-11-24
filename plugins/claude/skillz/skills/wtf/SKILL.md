@@ -1,7 +1,7 @@
 ---
 name: wtf
 description: >-
-  Use when the user invokes /wtf or $wtf to recover from a confusing explanation,
+  Use when the user invokes /skillz:wtf to recover from a confusing explanation,
   unexpected agent behavior, unclear work status, or a decision they cannot follow.
   Reconstruct the relevant context and give a short, literal explanation that
   restores understanding and control.
@@ -9,8 +9,7 @@ disable-model-invocation: true
 disallowed-tools: Edit, Write, NotebookEdit, Task, Agent, Workflow, Skill, SendMessage, TaskStop, Artifact
 argument-hint: "[optional: the confusing point]"
 metadata:
-  version: "1.1"
-  argument-hint: "[optional: the confusing point]"
+  version: "1.2"
 ---
 
 # WTF — What the Fuck?
@@ -24,7 +23,7 @@ The user is an experienced engineer who may not know this system or domain.
 Read the recent exchange, including the user's purpose, corrections, and supplied
 evidence. Find the unresolved question behind the invocation. It may concern an
 explanation, something the agent did, the current state of work, or a choice.
-An optional topic after `/wtf` narrows the focus. Do not require one.
+An optional topic after `/skillz:wtf` narrows the focus. Do not require one.
 
 Usually the target is the last substantive explanation. Include earlier turns
 when they contain the missing connection. Ignore unrelated status chatter. Do
@@ -132,7 +131,7 @@ On a later turn, when the user asks to continue or gives a code task, resume
 implementation and treat that authorization as still in force; do not turn
 recovery into repeated permission requests.
 
-If `/wtf` is repeated, keep the original unresolved topic as the reference. Find
+If `/skillz:wtf` is repeated, keep the original unresolved topic as the reference. Find
 a different missing connection or use a smaller literal example. Do not keep
 cutting words from the last rewrite. Ask one focused question only if the
 remaining ambiguity prevents a useful explanation.
