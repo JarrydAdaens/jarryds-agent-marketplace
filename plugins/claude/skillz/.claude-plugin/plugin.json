@@ -1,6 +1,6 @@
 {
   "name": "skillz",
-  "description": "Jarryd's favorite miscellaneous skills in one plugin: commit-log for structured commit messages, grade for decisive letter grades, wtf for freeze-and-explain recovery, and chimp-out-report for finding operator frustration in local AI conversation archives.",
+  "description": "Jarryd's favorite miscellaneous skills in one plugin: commit-log for structured commit messages, grade for decisive letter grades, wtf for freeze-and-explain recovery, memory-shitlist for auditing the RAM used by Chromium-based apps, and chimp-out-report for finding operator frustration in local AI conversation archives.",
   "author": {
     "name": "Jarryd Adaens"
   }
